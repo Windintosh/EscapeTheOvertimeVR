@@ -20,7 +20,9 @@ public class EscapeTheOvertimeVR : ModuleRules
 			"UMG",
 			"Slate",
 			"NavigationSystem",
-			"GeometryCollectionEngine"
+			"GeometryCollectionEngine",
+			"HeadMountedDisplay", // 구형 VR API 지원
+			"XRBase"             // 최신 OpenXR 표준 지원 (필수)
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
