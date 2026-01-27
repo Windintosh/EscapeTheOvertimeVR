@@ -1,4 +1,4 @@
-# 칼퇴의 정석: VR 미스터리 | Escape The Overtime: VR Mystery
+# 칼퇴의 정석: VR 미스터리
 ![Unreal Engine 5](https://img.shields.io/badge/Unreal_Engine-5.6-black?logo=unrealengine)
 ![Language](https://img.shields.io/badge/Language-C%2B%2B_%26_BluePrint-blue?logo=cplusplus)
 ![Genre](https://img.shields.io/badge/Genre-Stealth_Action-red)
