@@ -4,6 +4,10 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "InputActionValue.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "VRCharacterPawn.generated.h"
 
 UCLASS()
@@ -41,4 +45,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
 	UMotionControllerComponent* RightHandController;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	USkeletalMeshComponent* LeftHandMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR")
+	USkeletalMeshComponent* RightHandMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* GrabLeftAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	class UInputAction* GrabRightAction;
+
+protected:
+
+	// 필수 오버라이드 함수
+	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// 입력 콜백 함수
+	void OnGrabLeft(const FInputActionValue& Value);
+	void OnGrabRight(const FInputActionValue& Value);
 };
