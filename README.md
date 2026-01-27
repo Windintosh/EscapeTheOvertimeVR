@@ -1,6 +1,8 @@
-# 칼퇴의 정석: VR 미스터리  
-## Escape The Overtime: VR Mystery
-
+# 칼퇴의 정석: VR 미스터리 | Escape The Overtime: VR Mystery
+![Unreal Engine 5](https://img.shields.io/badge/Unreal_Engine-5.6-black?logo=unrealengine)
+![Language](https://img.shields.io/badge/Language-C%2B%2B_%26_BluePrint-blue?logo=cplusplus)
+![Genre](https://img.shields.io/badge/Genre-Stealth_Action-red)
+![Team](https://img.shields.io/badge/Team-3_People-green)
 > **"당신의 야근은 의식이 된다."**
 
 **Escape The Overtime: VR Mystery**는  
