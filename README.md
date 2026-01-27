@@ -127,6 +127,32 @@
   - Draw Call 최소화
 
 ---
+## ⚖️ License & Credits
+
+### UnrealMCP
+
+본 프로젝트는 **UnrealMCP**를 포함하고 있으며,  
+해당 라이브러리는 **chongdashu**가 개발하고  
+**lagisela**가 Unreal Engine 5.6 (Windows x64) 환경에 맞게 컴파일했습니다.
+
+- **Original Source**:  
+  https://github.com/chongdashu/unreal-mcp
+- **Build Source (UE 5.6)**:  
+  https://github.com/lagisela/UnrealMCP-compiled-for-Unreal-Engine-5.6---Windows-x64
+- **License**: MIT License
+```text
+Copyright (c) 2024 chongdashu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
 
 ## 📂 프로젝트 구조 (Directory Structure)
 
@@ -152,3 +178,5 @@ EscapeTheOvertime_VR/
 광과민성 경고: 일부 챕터(금요일)에 강한 점멸 효과가 포함되어 있습니다.
 
 Copyright © 2026 Team Overtime. All Rights Reserved.
+
+
