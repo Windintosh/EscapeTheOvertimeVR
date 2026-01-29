@@ -31,4 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "VR Interaction")
 	void Release(FVector ThrowVelocity);
+
+	// [추가] 쥐고 있는 상태에서 트리거 버튼을 눌렀을 때 호출
+	// Value: 0.0 ~ 1.0 (아날로그 트리거 압력)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "VR Interaction")
+	void OnAction(float Value);
 };

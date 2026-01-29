@@ -77,6 +77,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "VR Movement")
 	float SnapTurnAngle = 15.0f;
 
+	// 트리거 입력 액션
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* TriggerLeftAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* TriggerRightAction;
+
 protected:
 
 	// 필수 오버라이드 함수
@@ -108,5 +115,13 @@ protected:
 	// 스냅 턴 중복 입력을 막기 위한 플래그
 	bool bCanTurn = true;
 	void ResetTurn();
+
+	// 콜백 함수
+	void OnTriggerLeft(const FInputActionValue& Value);
+	void OnTriggerRight(const FInputActionValue& Value);
+
+	// [달리기] Left Grab 입력을 받아 부모 함수를 호출하는 래퍼
+	void OnSprintStart(const FInputActionValue& Value);
+	void OnSprintEnd(const FInputActionValue& Value);
 
 };

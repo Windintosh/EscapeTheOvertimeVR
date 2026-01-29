@@ -129,8 +129,13 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// 바인딩: Triggered, Started, Completed 등 타이밍 선택 가능
 		if (GrabLeftAction)
 		{
-			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnGrabLeft);
-			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabLeft); // 같은 함수에서 bool 값으로 분기하거나 함수를 나누거나 선택->나중에 함수 나눌 예정.
+			//EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnGrabLeft);
+			//EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabLeft); // 같은 함수에서 bool 값으로 분기하거나 함수를 나누거나 선택->나중에 함수 나눌 예정.
+			// 버튼을 누르는 순간 -> 달리기 시작
+			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnSprintStart);
+
+			// 버튼을 떼는 순간 -> 달리기 종료 (걷기 복귀)
+			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnSprintEnd);
 		}
 
 		if (GrabRightAction)
@@ -145,7 +150,15 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// [회전] Started: 딱 한 번만 실행 (Snap Turn)
 		if (VRTurnAction)
 			EnhancedInputComponent->BindAction(VRTurnAction, ETriggerEvent::Started, this, &AVRCharacterPawn::Turn);
+
+		// 트리거 바인딩 (Triggered: 누르는 동안 계속 값 전달, 예: 연사)
+		if (TriggerLeftAction)
+			EnhancedInputComponent->BindAction(TriggerLeftAction, ETriggerEvent::Triggered, this, &AVRCharacterPawn::OnTriggerLeft);
+
+		if (TriggerRightAction)
+			EnhancedInputComponent->BindAction(TriggerRightAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnTriggerRight);
 	}
+
 }
 
 void AVRCharacterPawn::TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor)
@@ -319,6 +332,68 @@ void AVRCharacterPawn::Turn(const FInputActionValue& Value)
 
 void AVRCharacterPawn::ResetTurn()
 {
+}
+
+void AVRCharacterPawn::OnTriggerLeft(const FInputActionValue& Value)
+{
+	// 왼손에 잡은 물건이 있고 + 인터페이스를 지원한다면
+	if (HeldActorLeft && HeldActorLeft->Implements<UVRGrabInterface>())
+	{
+		float Pressure = Value.Get<float>();
+		IVRGrabInterface::Execute_OnAction(HeldActorLeft, Pressure);
+	}
+}
+
+void AVRCharacterPawn::OnTriggerRight(const FInputActionValue& Value)
+{
+	//if (HeldActorRight && HeldActorRight->Implements<UVRGrabInterface>())
+	//{
+	//	float Pressure = Value.Get<float>();
+	//	IVRGrabInterface::Execute_OnAction(HeldActorRight, Pressure);
+	//}
+
+	float InputValue = Value.Get<float>();
+
+	// 1. 입력 확인: 트리거를 당겼을 때 이 로그가 뜨나요?
+	// 안 뜬다면 -> Input Action 연결(IMC) 문제
+	UE_LOG(LogTemp, Warning, TEXT("[1] Trigger Input Value: %f"), InputValue);
+
+	if (HeldActorRight)
+	{
+		// 2. 변수 확인: 이 로그가 뜨나요?
+		// 안 뜬다면 -> Grab 할 때 변수 저장이 실패한 것 (여기가 범인일 확률 90%)
+		UE_LOG(LogTemp, Warning, TEXT("[2] Sending Signal to: %s"), *HeldActorRight->GetName());
+
+		if (HeldActorRight->Implements<UVRGrabInterface>())
+		{
+			IVRGrabInterface::Execute_OnAction(HeldActorRight, InputValue);
+		}
+	}
+	else
+	{
+		// 3. 변수가 비어있음
+		UE_LOG(LogTemp, Error, TEXT("[3] HeldActorRight is NULL! (But gun is visually attached?)"));
+	}
+
+}
+
+void AVRCharacterPawn::OnSprintStart(const FInputActionValue& Value)
+{
+	if (Value.Get<float>() > 0.5) {
+		// 부모 클래스(HorrorCharacter)의 달리기 시작 함수 호출
+		DoStartSprint();
+
+		// 로그로 확인 (나중에 지우세요)
+		// UE_LOG(LogTemp, Log, TEXT("Sprint STARTED"));
+	}
+}
+
+void AVRCharacterPawn::OnSprintEnd(const FInputActionValue& Value)
+{
+	// 부모 클래스의 달리기 종료 함수 호출
+	DoEndSprint();
+
+	UE_LOG(LogTemp, Log, TEXT("Sprint ENDED"));
 }
 
 
