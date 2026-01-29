@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "VRGrabInterface.h"
 #include "VRCharacterPawn.generated.h"
 
 UCLASS()
@@ -65,7 +66,24 @@ protected:
 	// 필수 오버라이드 함수
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// 잡기 범위 (반지름 cm 단위)
+	UPROPERTY(EditDefaultsOnly, Category = "VR Interaction")
+	float GrabRadius = 20.0f;
+
+	// 현재 잡고 있는 액터를 저장 (놓을 때 필요)
+	UPROPERTY() // 가비지 컬렉션 방지 및 안전한 참조를 위해 UPROPERTY 필수
+	AActor* HeldActorLeft = nullptr;
+
+	UPROPERTY()
+	AActor* HeldActorRight = nullptr;
+
+	// 내부 헬퍼 함수: 특정 손으로 잡기/놓기 시도
+	void TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor);
+	void TryReleaseActor(AActor*& InHeldActor, USceneComponent* HandMesh);
+
 	// 입력 콜백 함수
 	void OnGrabLeft(const FInputActionValue& Value);
 	void OnGrabRight(const FInputActionValue& Value);
+
+
 };

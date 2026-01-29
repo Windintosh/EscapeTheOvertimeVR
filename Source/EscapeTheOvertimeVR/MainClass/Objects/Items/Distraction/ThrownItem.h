@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Items/ItemBase.h"
 #include "GeometryCollection/GeometryCollection.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "VRGrabInterface.h"
 #include "ThrownItem.generated.h"
 
 /**
@@ -27,7 +27,7 @@ public:
 
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API AThrownItem : public AItemBase
+class ESCAPETHEOVERTIMEVR_API AThrownItem : public AItemBase, public IVRGrabInterface
 {
 	GENERATED_BODY()
 	
@@ -45,6 +45,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	//UFUNCTION()
 	//void OnProjectileStop(const FHitResult& ImpactResult);
 
@@ -54,21 +56,32 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Destruction")
 	UGeometryCollection* RestCollectionAsset;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UProjectileMovementComponent* ProjectileMovement;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	TSubclassOf<AActor> BreakerClass;
 
 	// 타이머를 관리할 핸들
 	FTimerHandle CollisionTimerHandle;
+	FTimerHandle IgnorePawnTimerHandle; // 던진 후 충돌 복구용 타이머 추가
 
 	// 타이머가 끝나면 호출될 함수
 	UFUNCTION()
 	void DisablePawnCollision();
+	// 던진 후 Pawn과 충돌 다시 켜기
+	UFUNCTION()
+	void ReEnablePawnCollision();
 
 	bool bIsBroken = false;
 
+	bool bWasThrown = false;
+
 public:
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// VR Grab Interface 구현
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
+
+	// 던질 때 속도 보정을 위한 변수 (선택사항)
+	UPROPERTY(EditDefaultsOnly, Category = "VR Physics")
+	float ThrowPowerMultiplier = 1.0f; // 너무 약하게 던져지면 값을 올리세요
 };

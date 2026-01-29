@@ -1,4 +1,6 @@
 ﻿#include "MainClass/Characters/VRCharacterPawn/VRCharacterPawn.h"
+#include "Engine/OverlapResult.h" // 충돌 결과 처리용
+#include "DrawDebugHelpers.h"     // 디버그 원 그리기용
 
 // Sets default values
 AVRCharacterPawn::AVRCharacterPawn()
@@ -75,12 +77,99 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (GrabLeftAction)
 		{
 			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnGrabLeft);
+			EnhancedInputComponent->BindAction(GrabLeftAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabLeft); // 같은 함수에서 bool 값으로 분기하거나 함수를 나누거나 선택->나중에 함수 나눌 예정.
 		}
 
 		if (GrabRightAction)
 		{
 			EnhancedInputComponent->BindAction(GrabRightAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnGrabRight);
+			EnhancedInputComponent->BindAction(GrabRightAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabRight);
 		}
+	}
+}
+
+void AVRCharacterPawn::TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor)
+{
+	// 1. 이미 뭔가를 잡고 있다면 무시
+	if (OutHeldActor) return;
+
+	// 2. 구형 충돌 감지 설정
+	FVector HandLocation = HandMesh->GetComponentLocation();
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
+
+	// 감지할 채널 설정 (PhysicsBody, WorldDynamic 등 잡을 물체의 타입)
+	// 보통 잡을 물건은 PhysicsBody인 경우가 많습니다.
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this); // 나 자신은 무시
+
+	TArray<FOverlapResult> OverlapResults;
+	bool bHit = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		HandLocation,
+		FQuat::Identity,
+		ECC_PhysicsBody, // 잡을 물체의 콜리전 채널 (필요시 변경)
+		Sphere,
+		Params
+	);
+
+	// 3. 디버그용 원 그리기 (초록색: 성공, 빨간색: 실패)
+	DrawDebugSphere(GetWorld(), HandLocation, GrabRadius, 12, bHit ? FColor::Green : FColor::Red, false, 1.0f);
+
+	if (bHit)
+	{
+		// 4. 감지된 물체 중 '가장 가까운' + '인터페이스를 가진' 녀석 찾기
+		AActor* ClosestActor = nullptr;
+		float MinDistanceSq = FLT_MAX;
+
+		for (const FOverlapResult& Result : OverlapResults)
+		{
+			AActor* HitActor = Result.GetActor();
+
+			// 유효성 체크 & 인터페이스 구현 여부 체크
+			if (HitActor && HitActor->Implements<UVRGrabInterface>())
+			{
+				float DistSq = FVector::DistSquared(HandLocation, HitActor->GetActorLocation());
+				if (DistSq < MinDistanceSq)
+				{
+					MinDistanceSq = DistSq;
+					ClosestActor = HitActor;
+				}
+			}
+		}
+
+		// 5. 대상이 있으면 Grab 실행
+		if (ClosestActor)
+		{
+			// 인터페이스 호출: "나 너 잡았어" (Execute_ 접두사 필수!)
+			IVRGrabInterface::Execute_Grab(ClosestActor, HandMesh);
+
+			// 놓을 때를 대비해 변수에 저장
+			OutHeldActor = ClosestActor;
+
+			UE_LOG(LogTemp, Log, TEXT("Grabbed Actor: %s"), *ClosestActor->GetName());
+		}
+	}
+}
+
+void AVRCharacterPawn::TryReleaseActor(AActor*& InHeldActor, USceneComponent* HandMesh)
+{
+	if (InHeldActor)
+	{
+		// 인터페이스 호출: "나 너 놨어"
+		if (InHeldActor->Implements<UVRGrabInterface>())
+		{
+			// [핵심] 손의 현재 물리 속도를 가져옵니다.
+			FVector CurrentThrowVelocity = FVector::ZeroVector;
+			if (HandMesh)
+			{
+				CurrentThrowVelocity = HandMesh->GetComponentVelocity();
+			}
+			IVRGrabInterface::Execute_Release(InHeldActor, CurrentThrowVelocity);
+			UE_LOG(LogTemp, Log, TEXT("Released Actor w/ Velocity: %s"), *CurrentThrowVelocity.ToString());
+		}
+
+		// 변수 초기화
+		InHeldActor = nullptr;
 	}
 }
 
@@ -91,11 +180,35 @@ void AVRCharacterPawn::OnGrabLeft(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Warning, TEXT("Left Grab Input Detected: %f"), GripValue);
 
 	// 여기에 '물건 집기' 로직 호출
+	// 버튼이 눌려있는가? (true: 누름, false: 뗌) -> GripValue가 0.5 이상이면 눌린 것으로 간주
+	bool bIsPressed = GripValue > 0.5;
+
+	if (bIsPressed)
+	{
+		TryGrabActor(LeftHandMesh, HeldActorLeft);
+	}
+	else
+	{
+		TryReleaseActor(HeldActorLeft, LeftHandMesh);
+	}
+
 }
 
 void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Right Grab Input Detected"));
+	float GripValue = Value.Get<float>();
+	UE_LOG(LogTemp, Warning, TEXT("Right Grab Input Detected: %f"), GripValue);
+
+	bool bIsPressed = GripValue > 0.5;
+
+	if (bIsPressed)
+	{
+		TryGrabActor(RightHandMesh, HeldActorRight);
+	}
+	else
+	{
+		TryReleaseActor(HeldActorRight, RightHandMesh);
+	}
 }
 
 

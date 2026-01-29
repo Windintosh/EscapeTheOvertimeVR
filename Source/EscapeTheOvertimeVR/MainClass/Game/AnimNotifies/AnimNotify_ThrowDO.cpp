@@ -1,4 +1,4 @@
-#include "MainClass/Game/AnimNotifies/AnimNotify_ThrowDO.h"
+﻿#include "MainClass/Game/AnimNotifies/AnimNotify_ThrowDO.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -65,12 +65,12 @@ void UAnimNotify_ThrowDO::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 			UGameplayStatics::FinishSpawningActor(ThrownItem, SpawnTransform);
 
 			// 5. [발사] 소환이 완료된 후, Projectile Movement가 잘 작동하는지 확인
-			UProjectileMovementComponent* PM = ThrownItem->FindComponentByClass<UProjectileMovementComponent>();
-			if (PM)
-			{
-				// 만약 InitialSpeed로 자동 발사가 안 된다면 여기서 수동으로 속도 주입
-				// PM->Velocity = PlayerCharacter->GetActorForwardVector() * PM->InitialSpeed;
-			}
+			//UProjectileMovementComponent* PM = ThrownItem->FindComponentByClass<UProjectileMovementComponent>();
+			//if (PM)
+			//{
+			//	// 만약 InitialSpeed로 자동 발사가 안 된다면 여기서 수동으로 속도 주입
+			//	// PM->Velocity = PlayerCharacter->GetActorForwardVector() * PM->InitialSpeed;
+			//}
 
 			PlayerCharacter->DistractionItemQuantity--;
 		}
