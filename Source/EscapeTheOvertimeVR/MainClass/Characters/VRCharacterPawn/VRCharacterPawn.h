@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "HorrorCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -12,7 +12,7 @@
 #include "VRCharacterPawn.generated.h"
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API AVRCharacterPawn : public ACharacter
+class ESCAPETHEOVERTIMEVR_API AVRCharacterPawn : public AHorrorCharacter
 {
 	GENERATED_BODY()
 
@@ -63,11 +63,11 @@ public:
 
 	// [이동]
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
-	class UInputAction* MoveAction;
+	class UInputAction* VRMoveAction;
 
 	// [회전]
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
-	class UInputAction* TurnAction;
+	class UInputAction* VRTurnAction;
 
 	// 이동 속도 (cm/s)
 	UPROPERTY(EditAnywhere, Category = "VR Movement")
@@ -75,7 +75,7 @@ public:
 
 	// 스냅 턴 각도 (한 번 틱 할 때마다 돌아가는 각도)
 	UPROPERTY(EditAnywhere, Category = "VR Movement")
-	float SnapTurnAngle = 45.0f;
+	float SnapTurnAngle = 15.0f;
 
 protected:
 

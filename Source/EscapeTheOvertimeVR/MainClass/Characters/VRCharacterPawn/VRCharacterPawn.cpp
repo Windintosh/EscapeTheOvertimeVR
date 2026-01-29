@@ -4,12 +4,22 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" // 필수 헤더
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 AVRCharacterPawn::AVRCharacterPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 1. 부모(FPS)의 메쉬 숨기기
+	// VR에서는 내 몸통이 보이면 시야를 가리거나 이상하게 보일 수 있습니다.
+	// 'SetOwnerNoSee(true)': 나한테는 안 보이고, 거울이나 멀티플레이 상대방에게는 보임.
+	if (GetMesh())
+	{
+		GetMesh()->SetOwnerNoSee(true);
+		// 만약 그림자도 거슬리면: GetMesh()->SetCastShadow(false);
+	}
 
 	
 	// ACharacter는 이미 'GetCapsuleComponent()'가 Root입니다.
@@ -77,6 +87,28 @@ void AVRCharacterPawn::BeginPlay()
 			}
 		}
 	}
+
+	// [핵심] 부모가 만든 FPS 카메라 찾아서 끄기
+	// 내 VR 카메라는 켜두고, 나머지 모든 카메라를 비활성화합니다.
+	TArray<UCameraComponent*> Cameras;
+	GetComponents<UCameraComponent>(Cameras);
+
+	for (UCameraComponent* Cam : Cameras)
+	{
+		// 내가 방금 만든 VR 카메라는 건드리지 않음
+		if (Cam == VRCamera) continue;
+
+		// 부모가 만든 카메라는 끕니다.
+		Cam->Deactivate();
+		Cam->SetActive(false);
+
+		// 렌더링 타겟에서 제외 (확실하게)
+		// Cam->DestroyComponent(); // 과격한 방법 (필요 시 사용)
+	}
+	if (VRCamera)
+	{
+		VRCamera->Activate();
+	}
 }
 
 // Called every frame
@@ -107,12 +139,12 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			EnhancedInputComponent->BindAction(GrabRightAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabRight);
 		}
 		// [이동] Triggered: 누르고 있는 동안 계속 실행
-		if (MoveAction)
-			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVRCharacterPawn::Move);
+		if (VRMoveAction)
+			EnhancedInputComponent->BindAction(VRMoveAction, ETriggerEvent::Triggered, this, &AVRCharacterPawn::Move);
 
 		// [회전] Started: 딱 한 번만 실행 (Snap Turn)
-		if (TurnAction)
-			EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Started, this, &AVRCharacterPawn::Turn);
+		if (VRTurnAction)
+			EnhancedInputComponent->BindAction(VRTurnAction, ETriggerEvent::Started, this, &AVRCharacterPawn::Turn);
 	}
 }
 
