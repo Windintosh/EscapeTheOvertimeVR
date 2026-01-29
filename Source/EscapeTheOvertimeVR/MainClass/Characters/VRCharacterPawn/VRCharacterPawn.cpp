@@ -1,6 +1,9 @@
 ﻿#include "MainClass/Characters/VRCharacterPawn/VRCharacterPawn.h"
 #include "Engine/OverlapResult.h" // 충돌 결과 처리용
 #include "DrawDebugHelpers.h"     // 디버그 원 그리기용
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h" // 필수 헤더
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AVRCharacterPawn::AVRCharacterPawn()
@@ -8,13 +11,29 @@ AVRCharacterPawn::AVRCharacterPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// 1. 루트 컴포넌트 생성 (기준점)
+	
+	// ACharacter는 이미 'GetCapsuleComponent()'가 Root입니다.
+	// VR은 캡슐 크기를 좀 작게 하거나 조절할 필요가 있습니다.
+	GetCapsuleComponent()->InitCapsuleSize(40.f, 96.0f);
+
+
+	// 1. 루트 컴포넌트 생성(기준점)->APawn일때만, ACharacter는 이미 루트 컴포넌트가 존재
 	VROrigin = CreateDefaultSubobject<USceneComponent>(TEXT("VROrigin"));
-	RootComponent = VROrigin;
+	VROrigin->SetupAttachment(RootComponent); // 캡슐(Root) 아래에 붙임
+	//RootComponent = VROrigin;
 
 	// 2. 카메라 생성 및 부착
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
 	VRCamera->SetupAttachment(VROrigin);
+
+	// ---------------------------------------------------------
+	// [핵심] 이제 CharacterMovement 컴포넌트 설정이 가능해집니다!
+	// ---------------------------------------------------------
+	// 멀미 방지를 위한 VR 이동 설정 (생성자에서 미리 세팅 추천)
+	GetCharacterMovement()->MaxWalkSpeed = MWalkSpeed; // 걷기 속도
+	GetCharacterMovement()->MaxAcceleration = 20480.0f; // 즉시 가속 (멀미 감소)
+	GetCharacterMovement()->BrakingDecelerationWalking = 20480.0f; // 즉시 정지 (멀미 감소)
+	GetCharacterMovement()->bUseControllerDesiredRotation = false; // VR은 몸통 회전은 수동으로 함
 
 	// 3. 왼손 컨트롤러 설정
 	LeftHandController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("LeftHandController"));
@@ -36,6 +55,8 @@ AVRCharacterPawn::AVRCharacterPawn()
 	RightHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RightHandMesh"));
 	RightHandMesh->SetupAttachment(RightHandController);
 	RightHandMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
+
+
 }
 
 // Called when the game starts or when spawned
@@ -85,6 +106,13 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			EnhancedInputComponent->BindAction(GrabRightAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnGrabRight);
 			EnhancedInputComponent->BindAction(GrabRightAction, ETriggerEvent::Completed, this, &AVRCharacterPawn::OnGrabRight);
 		}
+		// [이동] Triggered: 누르고 있는 동안 계속 실행
+		if (MoveAction)
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVRCharacterPawn::Move);
+
+		// [회전] Started: 딱 한 번만 실행 (Snap Turn)
+		if (TurnAction)
+			EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Started, this, &AVRCharacterPawn::Turn);
 	}
 }
 
@@ -209,6 +237,56 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 	{
 		TryReleaseActor(HeldActorRight, RightHandMesh);
 	}
+}
+
+void AVRCharacterPawn::Move(const FInputActionValue& Value)
+{
+	// 입력값 (X: 좌우, Y: 전후)
+	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		// 카메라(헤드셋)가 바라보는 방향을 가져옴
+		// *중요*: 카메라는 Pawn의 자식 컴포넌트이므로 CameraComponent를 참조해야 함
+		// (만약 Camera 변수가 없다면 FindComponentByClass<UCameraComponent>() 사용)
+		//UCameraComponent* Camera = FindComponentByClass<UCameraComponent>();
+		if (!VRCamera) return;
+
+		// A. 전후 이동 (Camera Forward)
+		const FRotator Rotation = VRCamera->GetComponentRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0); // Z축(Pitch/Roll) 제거 -> 평면 이동
+
+		// 평면화된 앞방향 벡터
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(ForwardDirection, MovementVector.Y);
+
+		// B. 좌우 이동 (Camera Right)
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(RightDirection, MovementVector.X);
+	}
+}
+
+void AVRCharacterPawn::Turn(const FInputActionValue& Value)
+{
+	float TurnValue = Value.Get<float>();
+
+	// 데드존 처리 (살짝 건드린 건 무시)
+	if (FMath::Abs(TurnValue) < 0.5f) return;
+
+	// 회전 실행
+	AddControllerYawInput(TurnValue > 0 ? SnapTurnAngle : -SnapTurnAngle);
+
+	// *참고*: VR에서는 AddControllerYawInput이 먹히지 않을 때가 있습니다. (HMD가 시야를 지배하므로)
+	// 만약 위 코드로 회전이 안 된다면 아래 코드를 사용하세요.
+	/*
+	FRotator CurrentRot = GetActorRotation();
+	CurrentRot.Yaw += (TurnValue > 0 ? SnapTurnAngle : -SnapTurnAngle);
+	SetActorRotation(CurrentRot);
+	*/
+}
+
+void AVRCharacterPawn::ResetTurn()
+{
 }
 
 

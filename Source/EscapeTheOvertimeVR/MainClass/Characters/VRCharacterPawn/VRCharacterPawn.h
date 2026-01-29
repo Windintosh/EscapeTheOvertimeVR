@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -12,7 +12,7 @@
 #include "VRCharacterPawn.generated.h"
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API AVRCharacterPawn : public APawn
+class ESCAPETHEOVERTIMEVR_API AVRCharacterPawn : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -61,6 +61,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* GrabRightAction;
 
+	// [이동]
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* MoveAction;
+
+	// [회전]
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* TurnAction;
+
+	// 이동 속도 (cm/s)
+	UPROPERTY(EditAnywhere, Category = "VR Movement")
+	float MWalkSpeed = 300.0f;
+
+	// 스냅 턴 각도 (한 번 틱 할 때마다 돌아가는 각도)
+	UPROPERTY(EditAnywhere, Category = "VR Movement")
+	float SnapTurnAngle = 45.0f;
+
 protected:
 
 	// 필수 오버라이드 함수
@@ -85,5 +101,12 @@ protected:
 	void OnGrabLeft(const FInputActionValue& Value);
 	void OnGrabRight(const FInputActionValue& Value);
 
+	// 콜백 함수
+	void Move(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
+
+	// 스냅 턴 중복 입력을 막기 위한 플래그
+	bool bCanTurn = true;
+	void ResetTurn();
 
 };
