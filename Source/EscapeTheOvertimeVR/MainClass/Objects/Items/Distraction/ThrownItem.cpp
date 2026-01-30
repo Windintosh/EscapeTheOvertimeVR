@@ -70,7 +70,7 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	// ProjectileMovement를 안 쓰므로 Velocity가 아니라 충격량(Impulse)으로 판단 추천
 	float ImpactForce = NormalImpulse.Size();
 	UE_LOG(LogTemp, Error, TEXT("OnHit Called! Impact: %f, Hit Actor: %s"), ImpactForce, *OtherActor->GetName());
-	if (ImpactForce < 500.0f) return; // 임계값 조절 필요
+	if (ImpactForce < 10.0f) return; // 임계값 조절 필요
 
 	bIsBroken = true;
 
@@ -137,6 +137,13 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			BreakOrigin,
 			50.0f
 		);
+
+		FVector CenterLocation = GetActorLocation();
+
+		// Strength: 2000.0f 정도 (너무 세면 우주로 날아가니 조절 필요)
+		// Radius: 50.0f (머그컵 크기 정도)
+		// bVelChange: true (질량 무시하고 즉각 속도 변경)
+		GeometryCollectionComponent->AddRadialImpulse(CenterLocation, 50.0f, 2000.0f, ERadialImpulseFalloff::RIF_Linear, true);
 
 		// B. 외부 충격 (Impulse) - 파편 흩뿌리기
 		// bVelChange=false로 설정하고 질량 고려한 힘을 가함 (너무 빠르지 않게)
@@ -251,7 +258,7 @@ void AThrownItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("TI Location X: %f, Y: %f, Z: %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
+	//UE_LOG(LogTemp, Warning, TEXT("TI Location X: %f, Y: %f, Z: %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 }
 
 void AThrownItem::DisablePawnCollision()
@@ -344,33 +351,36 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 	// 1. 손에서 분리
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-	// 2. 물리 켜기
-	Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	Collision->SetSimulatePhysics(true);
+	// 2. 투척 속도 체크 (기준값 300.0f 등은 테스트하며 조절)
+	float Speed = ThrowVelocity.Size();
 
-	// 3. 속도 적용 (핵심: 손의 속도를 전달)
-	Collision->SetPhysicsLinearVelocity(ThrowVelocity * ThrowPowerMultiplier);
-
-	// [추가] 속도가 일정 이상일 때만 '던져졌다'고 판정 (살짝 놓는 건 제외)
-	// 300.0f는 대략적인 값이며, 필요에 따라 조절하세요.
-	if (ThrowVelocity.Size() > 300.0f)
+	if (Speed > 500.f) // [의도: 투척]
 	{
+		// 기존 로직: 물리 켜고 날려보냄
+		Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		// 안전장치
+		Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		// 혹시 손이 Pawn 채널이 아니라 다른 채널(예: WorldDynamic)일 수도 있으니 안전장치
+		// (필요하다면 추가) Collision->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+
+		Collision->SetSimulatePhysics(true);
+		Collision->SetPhysicsLinearVelocity(ThrowVelocity * ThrowPowerMultiplier);
+
+		// (선택) 회전력(Torque)을 약간 주면 더 리얼하게 날아감 (랜덤 회전)
+		//Collision->SetPhysicsAngularVelocityInDegrees(FVector(FMath::RandRange(-360, 360), FMath::RandRange(-360, 360), 0));
+
 		bWasThrown = true;
-		UE_LOG(LogTemp, Log, TEXT("Item THROWN! Speed: %f"), ThrowVelocity.Size());
+		GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
+
+		UE_LOG(LogTemp, Log, TEXT("Mug Thrown! (Speed: %f)"), Speed);
 	}
-	else
+	else // [의도: 소환 취소 / 살짝 놓기]
 	{
-		bWasThrown = false; // 살짝 놓음 (Drop)
-		UE_LOG(LogTemp, Log, TEXT("Item DROPPED (Not Thrown). Speed: %f"), ThrowVelocity.Size());
+		// 물리 켜지 말고 바로 제거
+		UE_LOG(LogTemp, Log, TEXT("Mug Dropped gently -> Destroyed (Unequipped)"));
+		Destroy();
 	}
 
-	// (선택) 회전력(Torque)을 약간 주면 더 리얼하게 날아감 (랜덤 회전)
-	//Collision->SetPhysicsAngularVelocityInDegrees(FVector(FMath::RandRange(-360, 360), FMath::RandRange(-360, 360), 0));
 
-	// 4. Pawn 충돌 무시 타이머 설정 
-	// (던지는 순간 손/몸에 맞고 터지는 것 방지, 0.5초 뒤에 ReEnablePawnCollision 호출)
-	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-	GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
-
-	UE_LOG(LogTemp, Log, TEXT("ThrownItem Released with Velocity: %s"), *ThrowVelocity.ToString());
 }

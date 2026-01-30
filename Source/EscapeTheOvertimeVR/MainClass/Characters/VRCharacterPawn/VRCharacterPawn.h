@@ -160,4 +160,11 @@ protected:
 	// 로그 출력용 헬퍼
 	void PrintCurrentSlot();
 
+	// 직접 계산한 오른손 속도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Physics")
+	FVector CalculatedRightHandVelocity;
+
+	// 이전 프레임의 오른손 위치
+	FVector LastRightHandLocation;
+
 };

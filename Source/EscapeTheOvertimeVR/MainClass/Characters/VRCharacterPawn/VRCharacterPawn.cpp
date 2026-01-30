@@ -109,6 +109,12 @@ void AVRCharacterPawn::BeginPlay()
 	{
 		VRCamera->Activate();
 	}
+
+	if (RightHandMesh)
+	{
+		LastRightHandLocation = RightHandMesh->GetComponentLocation();
+	}
+
 }
 
 // Called every frame
@@ -116,6 +122,20 @@ void AVRCharacterPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (RightHandMesh && DeltaTime > 0.0f)
+	{
+		FVector CurrentLocation = RightHandMesh->GetComponentLocation();
+
+		// 공식: (현재위치 - 이전위치) / 걸린시간 = 속도
+		CalculatedRightHandVelocity = (CurrentLocation - LastRightHandLocation) / DeltaTime;
+
+		// 다음 프레임을 위해 현재 위치 저장
+		LastRightHandLocation = CurrentLocation;
+
+		// 디버깅용: 틱마다 속도가 잘 나오는지 확인 (너무 많이 뜨면 주석 처리)
+		// if(CalculatedRightHandVelocity.Size() > 10.0f)
+		//    UE_LOG(LogTemp, Log, TEXT("Tick Velocity: %f"), CalculatedRightHandVelocity.Size());
+	}
 }
 
 // Called to bind functionality to input
@@ -348,8 +368,26 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 	}
 	else
 	{
-		// 버튼 뗄 때 -> 물건 놓기
-		TryReleaseActor(HeldActorRight, RightHandMesh);
+		if (HeldActorRight)
+		{
+			// [수정] 엔진 함수 대신 우리가 직접 계산한 값 사용
+			FVector FinalVelocity = CalculatedRightHandVelocity;
+
+			// VR 투척 보정 (손맛을 위해 1.3배 ~ 1.5배 증폭)
+			FinalVelocity *= 1.5f;
+
+			UE_LOG(LogTemp, Warning, TEXT("THROW! Manual Velocity: %s (Speed: %f)"), *FinalVelocity.ToString(), FinalVelocity.Size());
+
+			if (HeldActorRight->Implements<UVRGrabInterface>())
+			{
+				IVRGrabInterface::Execute_Release(HeldActorRight, FinalVelocity);
+			}
+
+			HeldActorRight = nullptr;
+
+			// 버튼 뗄 때 -> 물건 놓기
+			//TryReleaseActor(HeldActorRight, RightHandMesh);
+		}
 	}
 }
 
