@@ -157,8 +157,42 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		if (TriggerRightAction)
 			EnhancedInputComponent->BindAction(TriggerRightAction, ETriggerEvent::Started, this, &AVRCharacterPawn::OnTriggerRight);
-	}
 
+		if (PrevItemAction)
+			EnhancedInputComponent->BindAction(PrevItemAction, ETriggerEvent::Started, this, &AVRCharacterPawn::CycleItemPrev);
+
+		if (NextItemAction)
+			EnhancedInputComponent->BindAction(NextItemAction, ETriggerEvent::Started, this, &AVRCharacterPawn::CycleItemNext);
+	}
+}
+
+void AVRCharacterPawn::SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneComponent* HandMesh, AActor*& HeldActorRef)
+{
+	if (!ClassToSpawn || !HandMesh) return;
+
+	// 1. 손 위치에서 스폰
+	FVector SpawnLoc = HandMesh->GetComponentLocation();
+	FRotator SpawnRot = HandMesh->GetComponentRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AActor* NewItem = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnLoc, SpawnRot, SpawnParams);
+
+	if (NewItem)
+	{
+		// 2. 인터페이스 강제 호출하여 손에 부착
+		if (NewItem->Implements<UVRGrabInterface>())
+		{
+			// 변수에 먼저 등록 (중요: 신호 끊김 방지)
+			HeldActorRef = NewItem;
+
+			// Grab 실행 -> 아이템이 알아서 물리 끄고 손에 붙음 (아까 맞춘 소켓 위치로!)
+			IVRGrabInterface::Execute_Grab(NewItem, HandMesh);
+
+			UE_LOG(LogTemp, Log, TEXT("Spawned and Equipped: %s"), *NewItem->GetName());
+		}
+	}
 }
 
 void AVRCharacterPawn::TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor)
@@ -274,12 +308,47 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 
 	bool bIsPressed = GripValue > 0.5;
 
+	//if (bIsPressed)
+	//{
+	//	TryGrabActor(RightHandMesh, HeldActorRight);
+	//}
+	//else
+	//{
+	//	TryReleaseActor(HeldActorRight, RightHandMesh);
+	//}
+
 	if (bIsPressed)
 	{
-		TryGrabActor(RightHandMesh, HeldActorRight);
+		// 1. 이미 뭔가를 잡고 있다면? -> 놓는다 (기본 동작 유지 or 재장착)
+		if (HeldActorRight)
+		{
+			// 놓을 때는 슬롯 상관없이 무조건 Release
+			TryReleaseActor(HeldActorRight, RightHandMesh);
+			return;
+		}
+
+		// 2. 빈손일 때 -> 슬롯에 따라 행동 결정
+		switch (CurrentItemSlot)
+		{
+		case EItemSlot::None:
+			// [빈손] 기존처럼 월드에 있는 물건 잡기 시도
+			TryGrabActor(RightHandMesh, HeldActorRight);
+			break;
+
+		case EItemSlot::Tranquilizer:
+			// [권총] 소환 후 강제 잡기
+			SpawnAndEquip(TranquilizerClass, RightHandMesh, HeldActorRight);
+			break;
+
+		case EItemSlot::ThrownItem:
+			// [머그컵] 소환 후 강제 잡기
+			SpawnAndEquip(ThrownItemClass, RightHandMesh, HeldActorRight);
+			break;
+		}
 	}
 	else
 	{
+		// 버튼 뗄 때 -> 물건 놓기
 		TryReleaseActor(HeldActorRight, RightHandMesh);
 	}
 }
@@ -394,6 +463,50 @@ void AVRCharacterPawn::OnSprintEnd(const FInputActionValue& Value)
 	DoEndSprint();
 
 	UE_LOG(LogTemp, Log, TEXT("Sprint ENDED"));
+}
+
+void AVRCharacterPawn::CycleItemNext(const FInputActionValue& Value)
+{
+	// 현재 값 + 1
+	uint8 NextVal = (uint8)CurrentItemSlot + 1;
+	if (NextVal >= (uint8)EItemSlot::Max)
+	{
+		NextVal = 0; // 다시 처음(None)으로
+	}
+	CurrentItemSlot = (EItemSlot)NextVal;
+
+	PrintCurrentSlot();
+}
+
+void AVRCharacterPawn::CycleItemPrev(const FInputActionValue& Value)
+{
+	// 현재 값 - 1
+	uint8 PrevVal = (uint8)CurrentItemSlot;
+	if (PrevVal == 0)
+	{
+		PrevVal = (uint8)EItemSlot::Max - 1; // 끝으로 이동
+	}
+	else
+	{
+		PrevVal--;
+	}
+	CurrentItemSlot = (EItemSlot)PrevVal;
+
+	PrintCurrentSlot();
+}
+
+void AVRCharacterPawn::PrintCurrentSlot()
+{
+	FString SlotName;
+	switch (CurrentItemSlot)
+	{
+	case EItemSlot::None: SlotName = TEXT("EMPTY HAND (Interact)"); break;
+	case EItemSlot::Tranquilizer: SlotName = TEXT("TRANQUILIZER (Spawn)"); break;
+	case EItemSlot::ThrownItem: SlotName = TEXT("MUG (Spawn)"); break;
+	}
+
+	// 화면에 띄워서 확인
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Slot: %s"), *SlotName));
 }
 
 

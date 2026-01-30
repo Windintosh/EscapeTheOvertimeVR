@@ -11,6 +11,16 @@
 #include "VRGrabInterface.h"
 #include "VRCharacterPawn.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EItemSlot : uint8
+{
+	None        UMETA(DisplayName = "Empty Hand"), // 빈손 (일반 상호작용)
+	Tranquilizer      UMETA(DisplayName = "Tranquilizer"), // 마취총
+	ThrownItem         UMETA(DisplayName = "ThrownItem"),    // 머그컵
+	Max         UMETA(Hidden) // 개수 파악용
+};
+
 UCLASS()
 class ESCAPETHEOVERTIMEVR_API AVRCharacterPawn : public AHorrorCharacter
 {
@@ -84,6 +94,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
 	class UInputAction* TriggerRightAction;
 
+	// [인벤토리] 아이템 변경 버튼 (A/B 버튼 등)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* NextItemAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "VR Input")
+	class UInputAction* PrevItemAction;
+
+	// [스폰] 소환할 아이템 클래스 (블루프린트에서 지정)
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<AActor> TranquilizerClass;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<AActor> ThrownItemClass;
+	
+	void SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneComponent* HandMesh, AActor*& HeldActorRef);
+
 protected:
 
 	// 필수 오버라이드 함수
@@ -123,5 +149,15 @@ protected:
 	// [달리기] Left Grab 입력을 받아 부모 함수를 호출하는 래퍼
 	void OnSprintStart(const FInputActionValue& Value);
 	void OnSprintEnd(const FInputActionValue& Value);
+
+	// 현재 선택된 슬롯
+	EItemSlot CurrentItemSlot = EItemSlot::None;
+
+	// 슬롯 변경 함수
+	void CycleItemNext(const FInputActionValue& Value);
+	void CycleItemPrev(const FInputActionValue& Value);
+
+	// 로그 출력용 헬퍼
+	void PrintCurrentSlot();
 
 };
