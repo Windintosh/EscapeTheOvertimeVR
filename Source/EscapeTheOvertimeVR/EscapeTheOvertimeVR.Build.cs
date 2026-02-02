@@ -44,6 +44,7 @@ public class EscapeTheOvertimeVR : ModuleRules
             "EscapeTheOvertimeVR/MainClass/Objects/Items/Muffle",
             "EscapeTheOvertimeVR/MainClass/Objects/Items/SpeedUp",
             "EscapeTheOvertimeVR/MainClass/Objects/Items/Heal",
+            "EscapeTheOvertimeVR/MainClass/Objects/Items/TQAmmo",
             "EscapeTheOvertimeVR/MainClass/Objects/Props",
             "EscapeTheOvertimeVR/MainClass/Objects/Props/KeycardReader",
             "EscapeTheOvertimeVR/MainClass/Objects/WorldObjects",

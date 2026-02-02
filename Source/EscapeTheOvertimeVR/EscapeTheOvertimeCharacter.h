@@ -176,6 +176,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void EndSpeedUp();
 
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	void ActivateTQAmmo();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UAnimMontage* ThrowMontage;
 

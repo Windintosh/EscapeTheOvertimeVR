@@ -141,6 +141,12 @@ void AEscapeTheOvertimeCharacter::EndSpeedUp()
 	UE_LOG(LogTemp, Warning, TEXT("SpeedUp Ended"));
 }
 
+void AEscapeTheOvertimeCharacter::ActivateTQAmmo()
+{
+	TQAmmoQuantity += 3;
+	UE_LOG(LogTemp, Warning, TEXT("Got TQAmmo, you have %d"), TQAmmoQuantity);
+}
+
 void AEscapeTheOvertimeCharacter::MakeNoise(float Loudness, FVector NoiseLocation)
 {
 	if (bIsMuffled) return;

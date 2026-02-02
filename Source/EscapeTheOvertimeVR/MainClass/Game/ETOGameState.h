@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 //#include "GameFramework/GameState.h"
@@ -20,7 +20,7 @@ public:
 	void SpawnRandomItems();
 
 	const int32 MinItemIndex = 0; //Keycard
-	const int32 MaxItemIndex = 5; //MuffleItem, SpeedUpItem, DistractionItem, HealItem, MaxHPUpItem
+	const int32 MaxItemIndex = 6; //MuffleItem, SpeedUpItem, DistractionItem, HealItem, MaxHPUpItem, TQAmmo
 
 	bool bIsKeycardSpawned = false;
 

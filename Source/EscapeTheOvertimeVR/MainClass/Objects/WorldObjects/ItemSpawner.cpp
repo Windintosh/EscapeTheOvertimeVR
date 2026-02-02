@@ -1,4 +1,4 @@
-#include "MainClass/Objects/WorldObjects/ItemSpawner.h"
+﻿#include "MainClass/Objects/WorldObjects/ItemSpawner.h"
 #include "Components/BoxComponent.h"
 #include "Keycard.h"
 #include "MuffleItem.h"
@@ -6,6 +6,7 @@
 #include "DistractionItem.h"
 #include "HealItem.h"
 #include "MaxHPUpItem.h"
+#include "TQAmmo.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -114,6 +115,18 @@ AActor* AItemSpawner::SpawnItem(int32 Index)
 			ItemType = SpawnedItem->GetItemType();
 			SpawnedItem->AttachToComponent(BoxComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			UE_LOG(LogTemp, Display, TEXT("MaxHPUpItem Spawned"));
+			return SpawnedItem;
+		}
+		else return nullptr;
+	}
+	case 6:
+			{
+		ATQAmmo* SpawnedItem = GetWorld()->SpawnActor<ATQAmmo>(TQAmmoClass, GetActorLocation(), GetActorRotation());
+		if (SpawnedItem) {
+			ItemIndex = SpawnedItem->GetItemIndex();
+			ItemType = SpawnedItem->GetItemType();
+			SpawnedItem->AttachToComponent(BoxComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			UE_LOG(LogTemp, Display, TEXT("TQAmmo Spawned"));
 			return SpawnedItem;
 		}
 		else return nullptr;
