@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/MainDoors/MainDoor.h"
+﻿#include "MainClass/Objects/Doors/MainDoors/MainDoor.h"
 
 AMainDoor::AMainDoor()
 {
@@ -16,4 +16,9 @@ void AMainDoor::BeginPlay()
 		TargetYaw = InitialYaw - MovableYaw;
 	}
 
+}
+
+void AMainDoor::CloseDoor()
+{
+	//This door cannot be closed once opened, so NOP
 }

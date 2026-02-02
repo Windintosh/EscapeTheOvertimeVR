@@ -1,13 +1,14 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ItemInterface.h"
 #include "Components/SphereComponent.h"
+#include "VRGrabInterface.h"
 #include "ItemBase.generated.h"
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API AItemBase : public AActor, public IItemInterface
+class ESCAPETHEOVERTIMEVR_API AItemBase : public AActor, public IItemInterface, public IVRGrabInterface
 {
 	GENERATED_BODY()
 
@@ -21,6 +22,12 @@ public:
 	virtual int32 GetItemIndex() const override;
 
 	virtual void DestroyItem();
+
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
+
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
+
+	virtual void OnAction_Implementation(float Value) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,6 +66,9 @@ protected:
 
 	//when Item is used
 	virtual void ActivateItem(AActor* Activator) override;
+
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	bool bIsGrabbable = true;
 
 public:
 	// Called every frame
