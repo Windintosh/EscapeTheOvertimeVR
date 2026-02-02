@@ -62,3 +62,4 @@ public:
 	virtual void CloseDoor();
 
 };
+//flag for the file change

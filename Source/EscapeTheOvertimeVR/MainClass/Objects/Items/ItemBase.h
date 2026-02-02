@@ -70,6 +70,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bIsGrabbable = true;
 
+	// flag for the file change
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -21,3 +21,4 @@ protected:
 	
 	virtual void CloseDoor() override;
 };
+//flag for the file change

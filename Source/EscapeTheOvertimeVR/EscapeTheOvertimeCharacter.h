@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -72,6 +72,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ThrowAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ShootAction;
+
+
 	
 public:
 	AEscapeTheOvertimeCharacter();
@@ -102,6 +106,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	virtual void DoThrow();
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	virtual void DoShoot();
 
 protected:
 
@@ -144,6 +151,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FItemState SpeedUpItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	float IncreasedSpeed = 1200.f;

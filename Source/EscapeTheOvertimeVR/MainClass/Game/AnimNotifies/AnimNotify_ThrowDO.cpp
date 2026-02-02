@@ -62,6 +62,8 @@ void UAnimNotify_ThrowDO::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 
 			// 4. [소환 완료] 이제 BeginPlay와 OnConstruction이 실행됩니다.
 			// 물리 엔진이 이 시점에 올바른 크기와 Transform을 가지고 초기화됩니다.
+			ThrownItem->ChangeThrownState();
+
 			UGameplayStatics::FinishSpawningActor(ThrownItem, SpawnTransform);
 
 			// 5. [발사] 소환이 완료된 후, Projectile Movement가 잘 작동하는지 확인

@@ -384,3 +384,8 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 
 
 }
+
+void AThrownItem::ChangeThrownState()
+{
+	bWasThrown = !bWasThrown;
+}

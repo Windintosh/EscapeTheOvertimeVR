@@ -92,3 +92,4 @@ void ADoorBase::UpdateDoorMovement(float Value)
 	MeshComp->SetRelativeRotation(NewRotation);
 }
 
+//flag for the file change

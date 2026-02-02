@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "EscapeTheOvertimeCharacter.h"
 #include "Animation/AnimInstance.h"
@@ -70,6 +70,8 @@ void AEscapeTheOvertimeCharacter::SetupPlayerInputComponent(UInputComponent* Pla
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AEscapeTheOvertimeCharacter::LookInput);
 
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &AEscapeTheOvertimeCharacter::DoThrow);
+
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AEscapeTheOvertimeCharacter::DoShoot);
 	}
 	else
 	{
@@ -247,4 +249,9 @@ void AEscapeTheOvertimeCharacter::DoThrow()
 			}
 		}
 	}
+}
+
+void AEscapeTheOvertimeCharacter::DoShoot()
+{
+	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, FirstPersonCameraComponent->GetComponentLocation() + FirstPersonCameraComponent->GetForwardVector() * 100.f, FirstPersonCameraComponent->GetComponentRotation());
 }

@@ -22,3 +22,4 @@ void AMainDoor::CloseDoor()
 {
 	//This door cannot be closed once opened, so NOP
 }
+//flag for the file change

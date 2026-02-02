@@ -545,6 +545,6 @@ void AVRCharacterPawn::PrintCurrentSlot()
 
 	// 화면에 띄워서 확인
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Slot: %s"), *SlotName));
-}
+} //flag for the file change
 
 

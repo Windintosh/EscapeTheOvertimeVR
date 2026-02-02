@@ -87,4 +87,8 @@ public:
 	// 던질 때 속도 보정을 위한 변수 (선택사항)
 	UPROPERTY(EditDefaultsOnly, Category = "VR Physics")
 	float ThrowPowerMultiplier = 1.0f; // 너무 약하게 던져지면 값을 올리세요
+
+	void ChangeThrownState();
 };
+
+//flag for the file change
