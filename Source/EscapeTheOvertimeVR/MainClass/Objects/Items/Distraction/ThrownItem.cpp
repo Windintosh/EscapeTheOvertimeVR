@@ -217,7 +217,7 @@ void AThrownItem::BeginPlay()
 		//Collision->SetSimulatePhysics(true);
 		Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Collision->SetNotifyRigidBodyCollision(true); // Hit Event 발생 필수
-		Collision->SetSimulatePhysics(true); // 물리 엔진 가동
+		//Collision->SetSimulatePhysics(true); // 물리 엔진 가동
 
 		Collision->SetUseCCD(true);
 	}
@@ -300,7 +300,9 @@ void AThrownItem::ReEnablePawnCollision()
 {
 	if (Collision && !bIsBroken)
 	{
-		Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		//Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		// 특정 액터 무시 해제
+		Collision->IgnoreActorWhenMoving(GetInstigator(), false);
 	}
 }
 
@@ -358,11 +360,17 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 	{
 		// 기존 로직: 물리 켜고 날려보냄
 		Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Collision->SetCollisionProfileName(TEXT("PhysicsActor")); // Pawn은 Block 상태여야 함!
 
 		// 안전장치
-		Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		//Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		// 혹시 손이 Pawn 채널이 아니라 다른 채널(예: WorldDynamic)일 수도 있으니 안전장치
 		// (필요하다면 추가) Collision->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+
+		if (GetInstigator())
+		{
+			Collision->IgnoreActorWhenMoving(GetInstigator(), true);
+		}
 
 		Collision->SetSimulatePhysics(true);
 		Collision->SetPhysicsLinearVelocity(ThrowVelocity * ThrowPowerMultiplier);
@@ -371,7 +379,7 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 		//Collision->SetPhysicsAngularVelocityInDegrees(FVector(FMath::RandRange(-360, 360), FMath::RandRange(-360, 360), 0));
 
 		bWasThrown = true;
-		GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
+		//GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
 
 		UE_LOG(LogTemp, Log, TEXT("Mug Thrown! (Speed: %f)"), Speed);
 	}

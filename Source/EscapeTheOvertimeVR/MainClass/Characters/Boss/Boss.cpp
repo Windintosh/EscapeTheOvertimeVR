@@ -1,4 +1,4 @@
-#include "MainClass/Characters/Boss/Boss.h"
+﻿#include "MainClass/Characters/Boss/Boss.h"
 #include "MainClass/Characters/Boss/BossAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -93,8 +93,8 @@ void ABoss::Attack()
 
 void ABoss::Interact_Implementation(AActor* Interactor)
 {
-	AThrownItem* Item = Cast<AThrownItem>(Interactor);
-	if (!Item) return;
+	AActor* Item = Cast<AActor>(Interactor);
+	if (!Item->ActorHasTag("Projectile")) return;
 	ABossAIController* AIController = Cast<ABossAIController>(GetController());
 	if (!AIController) return;
 	UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
