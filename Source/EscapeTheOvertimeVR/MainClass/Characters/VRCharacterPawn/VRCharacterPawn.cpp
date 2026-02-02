@@ -362,7 +362,8 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 
 		case EItemSlot::ThrownItem:
 			// [머그컵] 소환 후 강제 잡기
-			SpawnAndEquip(ThrownItemClass, RightHandMesh, HeldActorRight);
+			if(DistractionItemQuantity > 0) 
+				SpawnAndEquip(ThrownItemClass, RightHandMesh, HeldActorRight);
 			break;
 		}
 	}

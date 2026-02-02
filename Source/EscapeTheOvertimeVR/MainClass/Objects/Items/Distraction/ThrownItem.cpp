@@ -1,6 +1,7 @@
 ﻿#include "MainClass/Objects/Items/Distraction/ThrownItem.h"
 #include "Boss/Boss.h"
 #include "HorrorCharacter.h"
+#include "VRCharacterPawn.h"
 #include "Kismet/GameplayStatics.h"
 
 AThrownItem::AThrownItem()
@@ -380,6 +381,12 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 
 		bWasThrown = true;
 		//GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
+
+		AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(GetInstigator());
+		if (VRPawn)
+		{
+			VRPawn->DistractionItemQuantity--;
+		}
 
 		UE_LOG(LogTemp, Log, TEXT("Mug Thrown! (Speed: %f)"), Speed);
 	}

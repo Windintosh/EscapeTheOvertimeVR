@@ -140,6 +140,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int32 DistractionItemQuantity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	int32 TQAmmoQuantity;
+
 	UPROPERTY(BlueprintAssignable, Category = "Item")
 	FDistractionItemChangedDelegate OnDistractionItemChanged;
 
