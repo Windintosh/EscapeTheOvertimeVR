@@ -27,7 +27,7 @@ public:
 
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API AThrownItem : public AItemBase, public IVRGrabInterface
+class ESCAPETHEOVERTIMEVR_API AThrownItem : public AItemBase
 {
 	GENERATED_BODY()
 	
@@ -78,7 +78,10 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	// VR Grab Interface 구현
+	UFUNCTION()
 	virtual void Grab_Implementation(USceneComponent* HandController) override;
+
+	UFUNCTION()
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
 	// 던질 때 속도 보정을 위한 변수 (선택사항)
