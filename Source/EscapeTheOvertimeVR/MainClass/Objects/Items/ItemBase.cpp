@@ -1,4 +1,4 @@
-﻿#include "MainClass/Objects/Items/ItemBase.h"
+#include "MainClass/Objects/Items/ItemBase.h"
 #include "Variant_Horror/HorrorCharacter.h" // 경로: Variant_Horror
 #include "Kismet/GameplayStatics.h"
 
@@ -107,39 +107,4 @@ void AItemBase::DestroyItem()
 {
 	UE_LOG(LogTemp, Display, TEXT("%s is destroyed."), *GetName());
 	Destroy();
-}
-
-void AItemBase::Grab_Implementation(USceneComponent* HandController)
-{
-	if (!bIsGrabbable) return;
-
-	ActivateItem(HandController->GetOwner());
-
-	// 기본 동작: 물리 끄고 손에 붙기
-	UPrimitiveComponent* RootPrim = Cast<UPrimitiveComponent>(GetRootComponent());
-	if (RootPrim)
-	{
-		RootPrim->SetSimulatePhysics(false);
-	}
-
-	AttachToComponent(HandController, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
-}
-
-void AItemBase::Release_Implementation(FVector ThrowVelocity)
-{
-	// 기본 동작: 손에서 떨어지고 물리 켜짐
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	UPrimitiveComponent* RootPrim = Cast<UPrimitiveComponent>(GetRootComponent());
-	if (RootPrim)
-	{
-		RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		RootPrim->SetSimulatePhysics(true);
-		RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
-	}
-}
-
-void AItemBase::OnAction_Implementation(float Value)
-{
-
 }
