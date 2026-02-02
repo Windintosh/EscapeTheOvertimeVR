@@ -382,7 +382,7 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 		bWasThrown = true;
 		//GetWorld()->GetTimerManager().SetTimer(IgnorePawnTimerHandle, this, &AThrownItem::ReEnablePawnCollision, 0.5f, false);
 
-		AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(GetInstigator());
+		AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (VRPawn)
 		{
 			VRPawn->DistractionItemQuantity--;
