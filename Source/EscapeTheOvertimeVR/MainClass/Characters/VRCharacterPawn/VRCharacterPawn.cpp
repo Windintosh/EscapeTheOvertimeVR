@@ -24,7 +24,7 @@ AVRCharacterPawn::AVRCharacterPawn()
 	
 	// ACharacter는 이미 'GetCapsuleComponent()'가 Root입니다.
 	// VR은 캡슐 크기를 좀 작게 하거나 조절할 필요가 있습니다.
-	GetCapsuleComponent()->InitCapsuleSize(20.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(40.f, 96.0f);
 
 
 	// 1. 루트 컴포넌트 생성(기준점)->APawn일때만, ACharacter는 이미 루트 컴포넌트가 존재

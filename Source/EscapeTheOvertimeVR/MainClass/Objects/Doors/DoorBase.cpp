@@ -1,4 +1,4 @@
-﻿#include "MainClass/Objects/Doors/DoorBase.h"
+#include "MainClass/Objects/Doors/DoorBase.h"
 #include "EscapeTheOvertimeCharacter.h"
 
 // Sets default values
@@ -51,37 +51,16 @@ void ADoorBase::Tick(float DeltaTime)
 
 }
 
-void ADoorBase::Grab_Implementation(USceneComponent* HandController)
-{
-	OpenDoor();
-}
-
-void ADoorBase::Release_Implementation(FVector ThrowVelocity)
-{
-
-}
-
-void ADoorBase::OpenDoor()
-{
-	DoorTimeline->PlayFromStart();
-	//UpdateDoorMovement(1.0f);
-	bIsOpen = true;
-}
-
-void ADoorBase::CloseDoor()
-{
-	DoorTimeline->ReverseFromEnd();
-	bIsOpen = false;
-}
-
 void ADoorBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
 {
 	AEscapeTheOvertimeCharacter* PlayerCharacter = Cast<AEscapeTheOvertimeCharacter>(OtherActor);
 	if (PlayerCharacter && !bIsOpen)
 	{
 		//will timeline work?
-		//UE_LOG(LogTemp, Warning, TEXT("Opening Door"));
-		//OpenDoor();
+		UE_LOG(LogTemp, Warning, TEXT("Character is near Door"));
+		DoorTimeline->PlayFromStart();
+		//UpdateDoorMovement(1.0f);
+		bIsOpen = true;
 	}
 }
 

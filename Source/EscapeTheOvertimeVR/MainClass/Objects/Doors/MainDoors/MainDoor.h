@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Doors/DoorBase.h"
@@ -19,6 +19,6 @@ protected:
 
 	virtual void BeginPlay() override;
 	
-	virtual void CloseDoor() override;
+
 };
 //flag for the file change
