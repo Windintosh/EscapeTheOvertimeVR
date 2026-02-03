@@ -215,6 +215,11 @@ void AVRCharacterPawn::SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneCom
 	}
 }
 
+void AVRCharacterPawn::GiveTranquilizer()
+{
+	bHasTranquilizer = true;
+}
+
 void AVRCharacterPawn::TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor)
 {
 	// 1. 이미 뭔가를 잡고 있다면 무시
@@ -357,7 +362,8 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 
 		case EItemSlot::Tranquilizer:
 			// [권총] 소환 후 강제 잡기
-			SpawnAndEquip(TranquilizerClass, RightHandMesh, HeldActorRight);
+			if(bHasTranquilizer)
+				SpawnAndEquip(TranquilizerClass, RightHandMesh, HeldActorRight);
 			break;
 
 		case EItemSlot::ThrownItem:

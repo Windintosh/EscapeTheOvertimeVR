@@ -110,6 +110,11 @@ public:
 	
 	void SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneComponent* HandMesh, AActor*& HeldActorRef);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory")
+	bool bHasTranquilizer = false;
+
+	void GiveTranquilizer();
+
 protected:
 
 	// 필수 오버라이드 함수
