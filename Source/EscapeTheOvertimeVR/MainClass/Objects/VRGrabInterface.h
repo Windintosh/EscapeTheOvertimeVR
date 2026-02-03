@@ -36,4 +36,6 @@ public:
 	// Value: 0.0 ~ 1.0 (아날로그 트리거 압력)
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "VR Interaction")
 	void OnAction(float Value);
+
+	bool bIsSpawnedItem = false;
 };

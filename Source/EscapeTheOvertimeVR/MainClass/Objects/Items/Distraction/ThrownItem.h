@@ -89,6 +89,8 @@ public:
 	float ThrowPowerMultiplier = 1.0f; // 너무 약하게 던져지면 값을 올리세요
 
 	void ChangeThrownState();
+
+	bool bIsSpawned = false;
 };
 
 //flag for the file change

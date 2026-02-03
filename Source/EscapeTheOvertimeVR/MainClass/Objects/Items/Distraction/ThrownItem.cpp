@@ -385,13 +385,24 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 		AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (VRPawn)
 		{
-			VRPawn->DistractionItemQuantity--;
+			if(bIsSpawned || bIsSpawnedItem)
+				VRPawn->DistractionItemQuantity--;
+			UE_LOG(LogTemp, Log, TEXT("Mug Thrown; Player has left: %d"), VRPawn->DistractionItemQuantity);
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("Mug Thrown! (Speed: %f)"), Speed);
 	}
 	else // [의도: 소환 취소 / 살짝 놓기]
 	{
+		if (!bIsSpawned || !bIsSpawnedItem)
+		{
+			AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			if (VRPawn)
+			{
+				VRPawn->DistractionItemQuantity++;
+				UE_LOG(LogTemp, Log, TEXT("Mug is not spawned; Player took this one: %d"), VRPawn->DistractionItemQuantity);
+			}
+		}
 		// 물리 켜지 말고 바로 제거
 		UE_LOG(LogTemp, Log, TEXT("Mug Dropped gently -> Destroyed (Unequipped)"));
 		Destroy();

@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" // 필수 헤더
 #include "Components/CapsuleComponent.h"
+#include "ThrownItem.h"
 #include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
@@ -206,6 +207,12 @@ void AVRCharacterPawn::SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneCom
 		{
 			// 변수에 먼저 등록 (중요: 신호 끊김 방지)
 			HeldActorRef = NewItem;
+
+			if (AThrownItem* NewThrownItem = Cast<AThrownItem>(NewItem))
+			{
+				NewThrownItem->bIsSpawnedItem = true;
+				NewThrownItem->bIsSpawned = true;
+			}
 
 			// Grab 실행 -> 아이템이 알아서 물리 끄고 손에 붙음 (아까 맞춘 소켓 위치로!)
 			IVRGrabInterface::Execute_Grab(NewItem, HandMesh);
