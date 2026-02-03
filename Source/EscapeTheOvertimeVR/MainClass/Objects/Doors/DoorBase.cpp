@@ -53,7 +53,10 @@ void ADoorBase::Tick(float DeltaTime)
 
 void ADoorBase::Grab_Implementation(USceneComponent* HandController)
 {
-	OpenDoor();
+	if(!bIsOpen)
+		OpenDoor();
+	else 
+		CloseDoor();
 }
 
 void ADoorBase::Release_Implementation(FVector ThrowVelocity)
@@ -63,6 +66,7 @@ void ADoorBase::Release_Implementation(FVector ThrowVelocity)
 
 void ADoorBase::OpenDoor()
 {
+	if (bIsOpen) return;
 	DoorTimeline->PlayFromStart();
 	//UpdateDoorMovement(1.0f);
 	bIsOpen = true;
@@ -70,6 +74,7 @@ void ADoorBase::OpenDoor()
 
 void ADoorBase::CloseDoor()
 {
+	if (!bIsOpen) return;
 	DoorTimeline->ReverseFromEnd();
 	bIsOpen = false;
 }
