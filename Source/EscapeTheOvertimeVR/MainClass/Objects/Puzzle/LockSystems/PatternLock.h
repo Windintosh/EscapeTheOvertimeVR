@@ -57,9 +57,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Puzzle Config")
 	TArray<UMaterialInterface*> SymbolMaterials;
 
-	// 정답 코드 (에디터 뷰포트에서 인스턴스별 설정 가능)
-	// 예: [2, 0, 4]
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Puzzle Config", meta = (ExposeOnSpawn = true))
+	// 정답 코드 (BeginPlay에서 랜덤 생성됨)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Puzzle Config")
 	TArray<int32> TargetCode;
 
 	// 성공 시 재생할 사운드
@@ -87,10 +86,22 @@ public:
 
 	// --- 함수 (Functions) ---
 
-	// 슬롯 상호작용 (외부/VR 핸드에서 호출)
-	// SlotIndex: 0, 1, 2
+	// 슬롯 버튼 입력 처리 (VR 핸드에서 호출)
 	UFUNCTION(BlueprintCallable, Category = "Puzzle Logic")
 	void InteractSlot(int32 SlotIndex);
+
+	// 정답 랜덤 생성 (게임 시작 시 호출)
+	UFUNCTION(BlueprintCallable, Category = "Puzzle Logic")
+	void RandomizeTargetCode();
+
+	// [중요] 힌트 액터(PatternHint)가 정답 정보를 읽어가기 위한 Getter 함수
+	UFUNCTION(BlueprintPure, Category = "Puzzle Access")
+	TArray<int32> GetTargetCode() const { return TargetCode; }
+
+	// 힌트 액터가 같은 머티리얼을 쓰기 위한 Getter 함수
+	UFUNCTION(BlueprintPure, Category = "Puzzle Access")
+	TArray<UMaterialInterface*> GetSymbolMaterials() const { return SymbolMaterials; }
+
 
 protected:
 	// 슬롯의 비주얼(머티리얼) 업데이트
