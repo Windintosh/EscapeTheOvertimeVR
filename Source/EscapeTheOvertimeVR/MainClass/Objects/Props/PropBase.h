@@ -1,13 +1,14 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
+#include "VRGrabInterface.h"
 #include "PropBase.generated.h"
 
 //basically this is no-index, no-type version of Item
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API APropBase : public AActor
+class ESCAPETHEOVERTIMEVR_API APropBase : public AActor, public IVRGrabInterface
 {
 	GENERATED_BODY()
 	
@@ -37,6 +38,13 @@ protected:
 	virtual void ActivateProp(AActor* Activator);
 
 	virtual void DestroyProp();
+
+	// override 키워드 유지 (부모의 함수를 재정의한다는 뜻)
+	UFUNCTION()
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
+
+	UFUNCTION()
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
 public:	
 	// Called every frame

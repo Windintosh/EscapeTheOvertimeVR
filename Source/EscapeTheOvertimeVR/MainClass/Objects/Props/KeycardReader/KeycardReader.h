@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Props/PropBase.h"
@@ -15,6 +15,10 @@ public:
 
 protected:
 	virtual void ActivateProp(AActor* Activator) override;
+
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
+
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
 private:
 

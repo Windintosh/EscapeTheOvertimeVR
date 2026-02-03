@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -6,10 +6,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "VRGrabInterface.h"
 #include "SlidingDoorBase.generated.h"
 
 UCLASS()
-class ESCAPETHEOVERTIMEVR_API ASlidingDoorBase : public AActor
+class ESCAPETHEOVERTIMEVR_API ASlidingDoorBase : public AActor, public IVRGrabInterface
 {
 	GENERATED_BODY()
 	
@@ -43,7 +44,16 @@ public:
 	UFUNCTION()
 	virtual void UpdateSDMovement(float Value);
 
+	// override 키워드 유지 (부모의 함수를 재정의한다는 뜻)
+	UFUNCTION()
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
+	
+	UFUNCTION()
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
+	void OpenDoor();
+
+	virtual void CloseDoor();
 
 protected:
 	// Called when the game starts or when spawned

@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/SlidingDoorBase.h"
+﻿#include "MainClass/Objects/Doors/SlidingDoorBase.h"
 #include "EscapeTheOvertimeCharacter.h"
 
 
@@ -23,6 +23,34 @@ void ASlidingDoorBase::UpdateSDMovement(float Value)
 {
 	//need to override, set initialmovevalue here
 
+}
+
+void ASlidingDoorBase::Grab_Implementation(USceneComponent* HandController)
+{
+	if (!bIsOpen)
+		OpenDoor();
+	else
+		CloseDoor();
+}
+
+void ASlidingDoorBase::Release_Implementation(FVector ThrowVelocity)
+{
+
+}
+
+void ASlidingDoorBase::OpenDoor()
+{
+	if (bIsOpen) return;
+	SlidingTimeline->PlayFromStart();
+	//UpdateDoorMovement(1.0f);
+	bIsOpen = true;
+}
+
+void ASlidingDoorBase::CloseDoor()
+{
+	if (!bIsOpen) return;
+	SlidingTimeline->ReverseFromEnd();
+	bIsOpen = false;
 }
 
 // Called when the game starts or when spawned
@@ -60,9 +88,9 @@ void ASlidingDoorBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	if (PlayerCharacter && !bIsOpen)
 	{
 		//timeline failed-> fix it later
-		SlidingTimeline->PlayFromStart();
-		UE_LOG(LogTemp, Warning, TEXT("Character is near SlidingDoor"));
+		//SlidingTimeline->PlayFromStart();
+		//UE_LOG(LogTemp, Warning, TEXT("Character is near SlidingDoor"));
 		//UpdateCabMovement(1.0f);
-		bIsOpen = true;
+		//bIsOpen = true;
 	}
 }

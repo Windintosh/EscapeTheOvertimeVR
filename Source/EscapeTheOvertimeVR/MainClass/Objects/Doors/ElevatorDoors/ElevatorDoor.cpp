@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/ElevatorDoors/ElevatorDoor.h"
+﻿#include "MainClass/Objects/Doors/ElevatorDoors/ElevatorDoor.h"
 #include "EscapeTheOvertimeCharacter.h"
 
 // Sets default values
@@ -50,6 +50,7 @@ void AElevatorDoor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AElevatorDoor::OpenDoor()
 {
+	if (bIsOpen) return;
 	SlidingTimeline->PlayFromStart();
 	if (OpenSound)
 	{
@@ -60,6 +61,7 @@ void AElevatorDoor::OpenDoor()
 
 void AElevatorDoor::CloseDoor()
 {
+	if (!bIsOpen) return;
 	SlidingTimeline->ReverseFromEnd();
 	if (CloseSound)
 	{

@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Props/KeycardReader/KeycardReader.h"
+﻿#include "MainClass/Objects/Props/KeycardReader/KeycardReader.h"
 #include "EscapeTheOvertimeCharacter.h"
 #include "ElevatorDoor.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,7 +43,7 @@ void AKeycardReader::ActivateProp(AActor* Activator)
 		for (AActor* EVDoor : EVDoors)
 		{
 			AElevatorDoor* OpenableDoor = Cast<AElevatorDoor>(EVDoor);
-			if (OpenableDoor)
+			if (OpenableDoor && !OpenableDoor->bIsOpen)
 			{
 				OpenableDoor->OpenDoor();
 				UE_LOG(LogTemp, Warning, TEXT("Elevator Door opening..."));
@@ -54,4 +54,14 @@ void AKeycardReader::ActivateProp(AActor* Activator)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Access Denied: Keycard required."));
 	}
+}
+
+void AKeycardReader::Grab_Implementation(USceneComponent* HandController)
+{
+	ActivateProp(HandController->GetOwner());
+}
+
+void AKeycardReader::Release_Implementation(FVector ThrowVelocity)
+{
+
 }
