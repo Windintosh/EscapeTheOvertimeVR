@@ -8,18 +8,18 @@ APropBase::APropBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-	SetRootComponent(Scene);
+	/*Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	SetRootComponent(Scene);*/
 
-	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
 	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-
-	Collision->SetupAttachment(Scene);
+	SetRootComponent(Collision);
+	//Collision->SetupAttachment(Scene);
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(Collision);
 
-	Collision->InitSphereRadius(20.0f);
+	Collision->InitBoxExtent(FVector(20.f));
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &APropBase::OnPropOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &APropBase::OnPropEndOverlap);
 
