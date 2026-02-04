@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "VRGrabInterface.h"
+#include "Sound/SoundCue.h" 
 #include "SlidingDoorBase.generated.h"
 
 UCLASS()
@@ -58,6 +59,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* CloseSound;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundCue* OpenSound;
 
 public:	
 	// Called every frame

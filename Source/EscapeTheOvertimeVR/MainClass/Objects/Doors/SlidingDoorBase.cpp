@@ -42,6 +42,10 @@ void ASlidingDoorBase::OpenDoor()
 {
 	if (bIsOpen) return;
 	SlidingTimeline->PlayFromStart();
+	if (OpenSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, OpenSound, GetActorLocation());
+	}
 	//UpdateDoorMovement(1.0f);
 	bIsOpen = true;
 }

@@ -69,6 +69,10 @@ void ADoorBase::OpenDoor()
 	if (bIsOpen) return;
 	DoorTimeline->PlayFromStart();
 	//UpdateDoorMovement(1.0f);
+	if (OpenSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, OpenSound, GetActorLocation());
+	}
 	bIsOpen = true;
 }
 
@@ -76,6 +80,10 @@ void ADoorBase::CloseDoor()
 {
 	if (!bIsOpen) return;
 	DoorTimeline->ReverseFromEnd();
+	if (CloseSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, CloseSound, GetActorLocation());
+	}
 	bIsOpen = false;
 }
 

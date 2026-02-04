@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "VRGrabInterface.h"
+#include "Sound/SoundCue.h" 
 #include "DoorBase.generated.h"
 
 UCLASS()
@@ -47,6 +48,12 @@ protected:
 
 	UFUNCTION()
 	void UpdateDoorMovement(float Value);
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* CloseSound;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundCue* OpenSound;
 
 public:	
 	// Called every frame
