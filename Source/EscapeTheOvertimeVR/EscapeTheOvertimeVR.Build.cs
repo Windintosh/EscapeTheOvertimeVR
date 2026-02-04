@@ -48,6 +48,8 @@ public class EscapeTheOvertimeVR : ModuleRules
             "EscapeTheOvertimeVR/MainClass/Objects/Props",
             "EscapeTheOvertimeVR/MainClass/Objects/Props/KeycardReader",
             "EscapeTheOvertimeVR/MainClass/Objects/WorldObjects",
+            "EscapeTheOvertimeVR/MainClass/Objects/Puzzle",
+            "EscapeTheOvertimeVR/MainClass/Objects/Puzzle/LockSystems",
             "EscapeTheOvertimeVR/MainClass/Characters",
             "EscapeTheOvertimeVR/MainClass/Characters/Boss",
             "EscapeTheOvertimeVR/MainClass/Characters/Dancer",
