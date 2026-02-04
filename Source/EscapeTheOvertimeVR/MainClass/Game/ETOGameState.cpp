@@ -9,7 +9,7 @@ void AETOGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	LoadPlayerHP();
+	LoadStuffs();
 	SpawnRandomItems();
 
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
@@ -17,6 +17,8 @@ void AETOGameState::BeginPlay()
 
 void AETOGameState::SpawnRandomItems()
 {
+	//Need to add conditions, perhaps, for checking the map itself(name or sth)
+		
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	UE_LOG(LogTemp, Warning, TEXT("Game Paused for Item Spawn"));
 	TArray<AActor*> ItemSpots;
@@ -146,4 +148,41 @@ void AETOGameState::LoadTime()
 		PC->CurrentMinute = ETOGI->LoadTimeMinute();
 		UE_LOG(LogTemp, Warning, TEXT("Time is loaded. ET: %f, Hour: %d, Minute: %.1f"), PC->ElapsedTime, PC->CurrentHour, PC->CurrentMinute);
 	}
+}
+
+void AETOGameState::SaveItems()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AHorrorCharacter* PlayerCharacter = Cast<AHorrorCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		ETOGI->SaveItemCounts(PlayerCharacter->DistractionItemQuantity, PlayerCharacter->TQAmmoQuantity); //Make functions?
+		UE_LOG(LogTemp, Warning, TEXT("Items are saved. DI: %d, TQA: %d"), PlayerCharacter->DistractionItemQuantity, PlayerCharacter->TQAmmoQuantity);
+	}
+}
+
+void AETOGameState::LoadItems()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AHorrorCharacter* PlayerCharacter = Cast<AHorrorCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		PlayerCharacter->DistractionItemQuantity = ETOGI->LoadDistractionItemCount();
+		PlayerCharacter->TQAmmoQuantity = ETOGI->LoadTQAmmoCount();
+		UE_LOG(LogTemp, Warning, TEXT("Items are loaded. DI: %d, TQA: %d"), PlayerCharacter->DistractionItemQuantity, PlayerCharacter->TQAmmoQuantity);
+	}
+}
+
+void AETOGameState::SaveStuffs()
+{
+	SavePlayerHP();
+	SaveTime();
+	SaveItems();
+}
+
+void AETOGameState::LoadStuffs()
+{
+	LoadPlayerHP();
+	LoadTime();
+	LoadItems();
 }

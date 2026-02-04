@@ -20,11 +20,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float PlayerMaxHP = 100.0f;
 
-	float CurrentTimeMinute;
+	float CurrentTimeMinute = 0.f;
 
-	int32 CurrentTimeHour;
+	int32 CurrentTimeHour = 20;
 
-	float SavedElapsedTime;
+	float SavedElapsedTime = 0.f;
+
+	int32 DistractionItemCount = 3;
+
+	int32 TQAmmoCount = 3;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player Data")
@@ -40,4 +44,10 @@ public:
 	int32 LoadTimeHour();
 
 	float LoadTimeMinute();
+
+	void SaveItemCounts(int32 DI, int32 TQA);
+
+	int32 LoadDistractionItemCount();
+
+	int32 LoadTQAmmoCount();
 };

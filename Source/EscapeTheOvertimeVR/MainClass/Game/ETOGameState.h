@@ -35,4 +35,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadTime();
+
+	UFUNCTION()
+	void SaveItems();
+
+	UFUNCTION()
+	void LoadItems();
+
+	UFUNCTION()
+	void SaveStuffs();
+
+	UFUNCTION()
+	void LoadStuffs();
 };

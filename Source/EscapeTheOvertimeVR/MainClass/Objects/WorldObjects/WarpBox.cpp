@@ -1,4 +1,4 @@
-#include "WarpBox.h"
+﻿#include "WarpBox.h"
 #include "Components/BoxComponent.h"
 #include "HorrorCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -91,7 +91,7 @@ void AWarpBox::WarpLevel()
 		AETOGameState* GameState = Cast<AETOGameState>(GetWorld()->GetGameState());
 
 		PlayerCharacter->SetHP(100.f);
-		GameState->SavePlayerHP();
+		GameState->SaveStuffs();
 
 		UE_LOG(LogTemp, Warning, TEXT("Friday Map Cleared! Triggering Ending Sequence..."));
 

@@ -39,3 +39,22 @@ float UETOGameInstance::LoadTimeMinute()
 	return CurrentTimeMinute;
 }
 
+
+
+void UETOGameInstance::SaveItemCounts(int32 DI, int32 TQA)
+{
+	DistractionItemCount = DI;
+	TQAmmoCount = TQA;
+	UE_LOG(LogTemp, Warning, TEXT("Items Saved - DI:%d, TQA:%d"), DistractionItemCount, TQAmmoCount);
+}
+
+int32 UETOGameInstance::LoadDistractionItemCount()
+{
+	return DistractionItemCount;
+}
+
+int32 UETOGameInstance::LoadTQAmmoCount()
+{
+	return TQAmmoCount;
+}
+
