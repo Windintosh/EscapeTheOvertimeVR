@@ -3,6 +3,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "ETOGameInstance.h"
 #include "HorrorCharacter.h"
+#include "HorrorPlayerController.h"
 
 void AETOGameState::BeginPlay()
 {
@@ -120,5 +121,29 @@ void AETOGameState::SavePlayerHP()
 	{
 		ETOGI->SavePlayerHP(PlayerCharacter->GetMaxHP());
 		UE_LOG(LogTemp, Warning, TEXT("Player MaxHP is saved %.1f -> %.1f"),PlayerCharacter->GetMaxHP(), ETOGI->LoadPlayerHP());
+	}
+}
+
+void AETOGameState::SaveTime()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AHorrorPlayerController* PC = Cast<AHorrorPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ETOGI && PC)
+	{
+		ETOGI->SaveTime(PC->ElapsedTime, PC->CurrentHour, PC->CurrentMinute);
+		UE_LOG(LogTemp, Warning, TEXT("Time is saved. ET: %f, Hour: %d, Minute: %.1f"), PC->ElapsedTime, PC->CurrentHour, PC->CurrentMinute);
+	}
+}
+
+void AETOGameState::LoadTime()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AHorrorPlayerController* PC = Cast<AHorrorPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ETOGI && PC)
+	{
+		PC->ElapsedTime = ETOGI->LoadElapsedTime();
+		PC->CurrentHour = ETOGI->LoadTimeHour();
+		PC->CurrentMinute = ETOGI->LoadTimeMinute();
+		UE_LOG(LogTemp, Warning, TEXT("Time is loaded. ET: %f, Hour: %d, Minute: %.1f"), PC->ElapsedTime, PC->CurrentHour, PC->CurrentMinute);
 	}
 }

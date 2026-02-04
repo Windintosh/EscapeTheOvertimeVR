@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -73,6 +73,9 @@ public:
 	/** 현재 분 (누적용 Float) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Time System")
 	float CurrentMinute;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time System")
+	float ElapsedTime = 0;
 
 	/** 시간 흐름 속도 (1.0 = 실제 1초가 게임 1분) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time System")

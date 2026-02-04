@@ -24,7 +24,15 @@ public:
 
 	bool bIsKeycardSpawned = false;
 
+	UFUNCTION()
 	void LoadPlayerHP();
 
+	UFUNCTION()
 	void SavePlayerHP();
+
+	UFUNCTION()
+	void SaveTime();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadTime();
 };

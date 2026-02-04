@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 
 #include "Variant_Horror/HorrorPlayerController.h"
@@ -20,7 +20,7 @@ AHorrorPlayerController::AHorrorPlayerController()
 	PrimaryActorTick.bCanEverTick = true;
 	CurrentHour = 20;   //  시작 시간
 	CurrentMinute = 0.0f;
-	TimeSpeed = 20.0f;  // 시간 흐름 속도 (조절 가능)
+	TimeSpeed = 4.0f;  // 시간 흐름 속도 (조절 가능) -> .066667f -> 4.0f, was 20.f
 	bIsGameOver = false;
 }
 
@@ -64,6 +64,8 @@ void AHorrorPlayerController::Tick(float DeltaTime)
 
 		// 1. 분 누적
 		CurrentMinute += DeltaTime * TimeSpeed;
+
+		ElapsedTime += DeltaTime;
 
 		// 2. 시간 변환
 		if (CurrentMinute >= 60.0f)
