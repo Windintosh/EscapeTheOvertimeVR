@@ -20,6 +20,8 @@ protected:
 
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
+	virtual void OnPropOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Audio")

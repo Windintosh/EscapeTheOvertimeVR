@@ -1,6 +1,7 @@
 ﻿#include "MainClass/Objects/Props/KeycardReader/KeycardReader.h"
 #include "EscapeTheOvertimeCharacter.h"
 #include "ElevatorDoor.h"
+#include "Keycard.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -17,18 +18,16 @@ AKeycardReader::AKeycardReader()
 
 void AKeycardReader::ActivateProp(AActor* Activator)
 {
-	AEscapeTheOvertimeCharacter* PlayerCharacter = Cast<AEscapeTheOvertimeCharacter>(Activator);
+	AKeycard* Keycard = Cast<AKeycard>(Activator);//->Change this to Keycard
 
-	if (!PlayerCharacter) return;
+	if (!Keycard) return;
 
 	// 카드키 소지 여부 확인 (Keycard.cpp에서 true로 설정된 값)
-	if (PlayerCharacter->bHasKeycard)
+	if (Keycard)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Keycard Access Granted."));
 
-		// 1. 카드키 소모 (사용 처리)
-		// boolean 타입이므로 false로 되돌려 "감소/소멸" 효과를 냄
-		PlayerCharacter->bHasKeycard = false;
+		Keycard->bIsKeycardUsed = true; // 카드키 사용 처리
 
 		// 2. 인식 성공 사운드 재생
 		if (AccessGrantedSound)
@@ -63,5 +62,12 @@ void AKeycardReader::Grab_Implementation(USceneComponent* HandController)
 
 void AKeycardReader::Release_Implementation(FVector ThrowVelocity)
 {
+
+}
+
+void AKeycardReader::OnPropOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ActivateProp(OtherActor);
+
 
 }

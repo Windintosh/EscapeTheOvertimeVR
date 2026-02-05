@@ -49,7 +49,7 @@ void AItemBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("[2] 캐스팅 성공! 아이템 활성화..."));
 
-		ActivateItem(OtherActor);
+		//ActivateItem(OtherActor);
 	}
 	else
 	{

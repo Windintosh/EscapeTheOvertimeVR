@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Items/Keycard/Keycard.h"
+﻿#include "MainClass/Objects/Items/Keycard/Keycard.h"
 #include "EscapeTheOvertimeCharacter.h" // 혹은 HorrorCharacter.h
 
 AKeycard::AKeycard()
@@ -18,5 +18,30 @@ void AKeycard::ActivateItem(AActor* Activator)
 		UE_LOG(LogTemp, Warning, TEXT("Keycard Acquired!"));
 	}
 
-	Super::ActivateItem(Activator);
+	//Super::ActivateItem(Activator);
 }
+
+void AKeycard::Grab_Implementation(USceneComponent* HandController)
+{
+	Super::Grab_Implementation(HandController);
+
+	ActivateItem(HandController->GetOwner());
+}
+
+void AKeycard::Release_Implementation(FVector ThrowVelocity)
+{
+	AEscapeTheOvertimeCharacter* PlayerCharacter = GetWorld()->GetFirstPlayerController()->GetPawn<AEscapeTheOvertimeCharacter>();
+
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->bHasKeycard = false;
+		UE_LOG(LogTemp, Warning, TEXT("Keycard Dropped!"));
+	}
+
+	if (bIsKeycardUsed) DestroyItem();
+
+	Super::Release_Implementation(ThrowVelocity);
+
+}
+
+

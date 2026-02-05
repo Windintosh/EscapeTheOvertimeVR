@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Items/ItemBase.h"
@@ -18,6 +18,12 @@ protected:
 
 	virtual void ActivateItem(AActor* Activator) override;
 
+	virtual void Grab_Implementation(USceneComponent* HandController) override;
 
+	virtual void Release_Implementation(FVector ThrowVelocity) override;
+
+public:
+
+	bool bIsKeycardUsed = false;
 
 };
