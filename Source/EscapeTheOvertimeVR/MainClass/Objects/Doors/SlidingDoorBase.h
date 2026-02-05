@@ -56,6 +56,12 @@ public:
 
 	virtual void CloseDoor();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
+	bool bIsUnopenable = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
+	bool bIsUnclosable = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

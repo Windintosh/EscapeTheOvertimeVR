@@ -5,6 +5,7 @@ AKeycard::AKeycard()
 {
 	ItemType = TEXT("Keycard");
 	ItemIndex = 0;
+	bIsGimmickItem = true;
 }
 
 void AKeycard::ActivateItem(AActor* Activator)

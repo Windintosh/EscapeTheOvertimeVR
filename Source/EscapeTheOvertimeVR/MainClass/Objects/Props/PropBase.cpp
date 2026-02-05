@@ -107,7 +107,7 @@ void APropBase::Release_Implementation(FVector ThrowVelocity)
 		if (RootPrim)
 		{
 			RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			RootPrim->SetSimulatePhysics(true);
+			if(!bIsGimmickProp) RootPrim->SetSimulatePhysics(true);
 			RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
 		}
 	}

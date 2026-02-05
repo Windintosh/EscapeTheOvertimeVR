@@ -4,7 +4,7 @@ AMainDoor::AMainDoor()
 {
 	//need to add logic to change rotation->Done!
 
-
+	bIsUnclosable = true;	
 }
 
 void AMainDoor::BeginPlay()
@@ -17,9 +17,3 @@ void AMainDoor::BeginPlay()
 	}
 
 }
-
-void AMainDoor::CloseDoor()
-{
-	//This door cannot be closed once opened, so NOP
-}
-//flag for the file change

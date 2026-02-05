@@ -41,6 +41,7 @@ void ASlidingDoorBase::Release_Implementation(FVector ThrowVelocity)
 void ASlidingDoorBase::OpenDoor()
 {
 	if (bIsOpen) return;
+	if (bIsUnopenable) return;
 	SlidingTimeline->PlayFromStart();
 	if (OpenSound)
 	{
@@ -53,6 +54,7 @@ void ASlidingDoorBase::OpenDoor()
 void ASlidingDoorBase::CloseDoor()
 {
 	if (!bIsOpen) return;
+	if (bIsUnclosable) return;
 	SlidingTimeline->ReverseFromEnd();
 	bIsOpen = false;
 }

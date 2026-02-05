@@ -67,6 +67,7 @@ void ADoorBase::Release_Implementation(FVector ThrowVelocity)
 void ADoorBase::OpenDoor()
 {
 	if (bIsOpen) return;
+	if (bIsUnopenable) return;
 	DoorTimeline->PlayFromStart();
 	//UpdateDoorMovement(1.0f);
 	if (OpenSound)
@@ -79,6 +80,7 @@ void ADoorBase::OpenDoor()
 void ADoorBase::CloseDoor()
 {
 	if (!bIsOpen) return;
+	if (bIsUnclosable) return;
 	DoorTimeline->ReverseFromEnd();
 	if (CloseSound)
 	{

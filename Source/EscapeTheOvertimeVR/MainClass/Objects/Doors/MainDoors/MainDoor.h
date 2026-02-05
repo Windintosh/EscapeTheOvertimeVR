@@ -18,7 +18,7 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-	
-	virtual void CloseDoor() override;
+
+	//bool bIsUnclosable = true;
 };
 //flag for the file change

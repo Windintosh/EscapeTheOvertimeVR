@@ -70,5 +70,11 @@ public:
 
 	virtual void CloseDoor();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
+	bool bIsUnopenable = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
+	bool bIsUnclosable = false;
+
 };
 //flag for the file change

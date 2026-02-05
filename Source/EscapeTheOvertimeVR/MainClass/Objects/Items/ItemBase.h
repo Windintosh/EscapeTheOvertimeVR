@@ -70,7 +70,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bIsGrabbable = true;
 
-	// flag for the file change
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	bool bIsGimmickItem = false;
 
 public:
 	// Called every frame

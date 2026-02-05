@@ -47,6 +47,9 @@ protected:
 	UFUNCTION()
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
+	UPROPERTY(EditAnywhere, Category = "Item")
+	bool bIsGimmickProp = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
