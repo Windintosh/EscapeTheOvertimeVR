@@ -5,6 +5,8 @@ AMainDoor::AMainDoor()
 	//need to add logic to change rotation->Done!
 
 	bIsUnclosable = true;	
+
+	bIsUnopenable = true;
 }
 
 void AMainDoor::BeginPlay()

@@ -81,7 +81,9 @@ void ARobotVacuum::StartRVMovement()
 
 void ARobotVacuum::StopRVMovement()
 {
+	//play sound or effect here
     bCanMove = false;
+	PrimaryActorTick.bCanEverTick = false;
     // 필요하다면 여기서 잡히는 애니메이션 재생이나 사운드 출력 등을 추가
 }
 
