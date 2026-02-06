@@ -6,6 +6,7 @@ ARobotVacuum::ARobotVacuum()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bCanMove = true; // 기본적으로 움직임 허용
+    Collision->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 }
 
 void ARobotVacuum::BeginPlay()
@@ -47,7 +48,8 @@ void ARobotVacuum::Grab_Implementation(USceneComponent* HandController)
 {
 	Super::Grab_Implementation(HandController);
 
-	ActivateProp(HandController->GetOwner());
+    StopRVMovement();
+	//ActivateProp(HandController->GetOwner());
 }
 
 void ARobotVacuum::Release_Implementation(FVector ThrowVelocity)
@@ -63,7 +65,7 @@ void ARobotVacuum::OnPropOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 		ActivateProp(OtherActor);
         return;
 	}
-    StartRVMovement();
+    //StartRVMovement();
 }
 
 void ARobotVacuum::ActivateProp(AActor* Activator)
