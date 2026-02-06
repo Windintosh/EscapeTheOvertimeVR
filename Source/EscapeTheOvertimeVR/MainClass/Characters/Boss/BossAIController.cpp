@@ -1,4 +1,4 @@
-#include "MainClass/Characters/Boss/BossAIController.h"
+﻿#include "MainClass/Characters/Boss/BossAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
 #include "GameFramework/Character.h"
@@ -25,10 +25,10 @@ ABossAIController::ABossAIController()
 
 	// 2. 시각 설정 (Sight)
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 1500.0f; // 감지 반경
-	SightConfig->LoseSightRadius = 2000.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
-	SightConfig->SetMaxAge(5.0f); // 기억 유지 시간
+	SightConfig->SightRadius = 500.0f; // 감지 반경
+	SightConfig->LoseSightRadius = 700.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 60.0f;
+	SightConfig->SetMaxAge(3.0f); // 기억 유지 시간
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -36,7 +36,7 @@ ABossAIController::ABossAIController()
 
 	// 3. 청각 설정 (Hearing) 
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
-	HearingConfig->HearingRange = 2500.0f; // 소리 감지 범위
+	HearingConfig->HearingRange = 500.0f; // 소리 감지 범위
 	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
 	HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
