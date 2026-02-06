@@ -4,6 +4,7 @@ AMainDoorKey::AMainDoorKey()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bIsGimmickProp = true;
+	Collision->SetSimulatePhysics(true);
 }
 
 void AMainDoorKey::BeginPlay()

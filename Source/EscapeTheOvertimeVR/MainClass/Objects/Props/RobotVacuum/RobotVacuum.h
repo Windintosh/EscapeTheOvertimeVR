@@ -2,7 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Props/PropBase.h"
+#include "MainDoorKey.h"
 #include "RobotVacuum.generated.h"
+
 
 /**
  * 
@@ -14,6 +16,13 @@ class ESCAPETHEOVERTIMEVR_API ARobotVacuum : public APropBase
 
 public:
 	ARobotVacuum();
+
+	UPROPERTY(EditAnywhere, Category = "Item")
+	TSubclassOf<class AMainDoorKey> MainDoorKeyClass;
+
+	AMainDoorKey* SpawnedKey;
+
+	AMainDoorKey*  SpawnKey();
 	
 protected:
 
@@ -56,4 +65,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Robot Settings")
 	float RandomMoveRadius = 1000.0f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	bool bIsKeySpawned = false;
 };

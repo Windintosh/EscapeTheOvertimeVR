@@ -12,10 +12,12 @@ ADoorBase::ADoorBase()
 	BoxComp->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	BoxComp->SetBoxExtent(FVector(30.f, 74.f, 147.f));
 	BoxComp->SetRelativeLocation(FVector(0.f, 0.f, 147.f), false);
+	BoxComp->SetCanEverAffectNavigation(false);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	MeshComp->SetupAttachment(BoxComp);
 	MeshComp->SetRelativeLocation(FVector(0.f, 74.f, -147.f), false);
+	MeshComp->SetCanEverAffectNavigation(false);
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
 
