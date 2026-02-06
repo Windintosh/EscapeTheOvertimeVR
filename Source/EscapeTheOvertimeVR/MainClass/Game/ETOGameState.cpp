@@ -3,6 +3,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "ETOGameInstance.h"
 #include "HorrorCharacter.h"
+#include "VRCharacterPawn.h"
 #include "HorrorPlayerController.h"
 
 void AETOGameState::BeginPlay()
@@ -173,11 +174,34 @@ void AETOGameState::LoadItems()
 	}
 }
 
+void AETOGameState::SavePlayerGotGolden()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		ETOGI->SaveGotGolden(PlayerCharacter->bGotGolden);
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is saved: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
+void AETOGameState::LoadPlayerGotGolden()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		PlayerCharacter->bGotGolden = ETOGI->LoadGotGolden();
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is loaded: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
 void AETOGameState::SaveStuffs()
 {
 	SavePlayerHP();
 	SaveTime();
 	SaveItems();
+	SavePlayerGotGolden();
 }
 
 void AETOGameState::LoadStuffs()
@@ -185,4 +209,5 @@ void AETOGameState::LoadStuffs()
 	LoadPlayerHP();
 	LoadTime();
 	LoadItems();
+	LoadPlayerGotGolden();
 }

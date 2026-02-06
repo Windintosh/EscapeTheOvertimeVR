@@ -115,6 +115,9 @@ public:
 
 	void GiveTranquilizer();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	bool bGotGolden = false;
+
 protected:
 
 	// 필수 오버라이드 함수

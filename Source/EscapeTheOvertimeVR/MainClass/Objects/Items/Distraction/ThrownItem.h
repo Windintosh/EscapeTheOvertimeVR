@@ -5,6 +5,7 @@
 #include "GeometryCollection/GeometryCollection.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "VRGrabInterface.h"
+#include "Engine/DamageEvents.h"
 #include "ThrownItem.generated.h"
 
 /**
@@ -74,6 +75,16 @@ protected:
 
 	bool bWasThrown = false;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsGolden = false;
+
+	UPROPERTY(EditAnywhere)
+	UMaterial* GoldenMaterial;
+
+	FPointDamageEvent DamageEvent;
+
+	float Damage = 0.f;
+
 public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -91,6 +102,8 @@ public:
 	void ChangeThrownState();
 
 	bool bIsSpawned = false;
-};
 
-//flag for the file change
+	void ChangeToGoldenItem();
+
+	void GrantGold();
+};

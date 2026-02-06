@@ -43,6 +43,12 @@ public:
 	void LoadItems();
 
 	UFUNCTION()
+	void SavePlayerGotGolden();
+
+	UFUNCTION()
+	void LoadPlayerGotGolden();
+
+	UFUNCTION()
 	void SaveStuffs();
 
 	UFUNCTION()

@@ -93,9 +93,14 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		UE_LOG(LogTemp, Log, TEXT("MakeNoise Triggered by PlayerPawn"));
 	}
 
-	if (OtherActor)
+	if (OtherActor && (OtherActor != PlayerPawn || OtherActor != GetInstigator()))
 	{
 		ActivateItem(OtherActor); //do sth to boss
+
+		Damage = 20.f + ImpactForce * 0.01;
+
+		OtherActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+		UE_LOG(LogTemp, Log, TEXT("%f Damage Applied to %s"), Damage, *OtherActor->GetName());
 	}
 
 	// 1. 둥둥 떠있게 될 Static Mesh를 숨깁니다.
@@ -190,10 +195,7 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 void AThrownItem::ActivateItem(AActor* Activator)
 {
 	ABoss* Boss = Cast<ABoss>(Activator);
-	if (!Boss) return;
-
-	//Make boss stunned or sth
-	IBossHit::Execute_Interact(Boss, this); //stun Boss
+	if (Boss) IBossHit::Execute_Interact(Boss, this);	//stun Boss ,Make boss stunned or sth
 }
 
 void AThrownItem::BeginPlay()
@@ -252,7 +254,11 @@ void AThrownItem::BeginPlay()
 		GeometryCollectionComponent->SetNotifyBreaks(true);
 	}
 
-
+	AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if (VRPawn->bGotGolden || bIsGolden)
+	{
+		ChangeToGoldenItem();
+	}
 }
 
 void AThrownItem::Tick(float DeltaTime)
@@ -330,6 +336,8 @@ void AThrownItem::Grab_Implementation(USceneComponent* HandController)
 {
 	if (bIsBroken || !Collision) return;
 
+	if (bIsGolden) GrantGold();
+
 	bWasThrown = false;
 
 	// 1. 물리 끄기 (손에 붙이기 위해)
@@ -385,7 +393,7 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 		AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (VRPawn)
 		{
-			if(bIsSpawned || bIsSpawnedItem)
+			if((bIsSpawned || bIsSpawnedItem) && !VRPawn->bGotGolden)
 				VRPawn->DistractionItemQuantity--;
 			UE_LOG(LogTemp, Log, TEXT("Mug Thrown; Player has left: %d"), VRPawn->DistractionItemQuantity);
 		}
@@ -414,4 +422,22 @@ void AThrownItem::Release_Implementation(FVector ThrowVelocity)
 void AThrownItem::ChangeThrownState()
 {
 	bWasThrown = !bWasThrown;
+}
+
+void AThrownItem::ChangeToGoldenItem()
+{
+	bIsGolden = true;
+	StaticMesh->SetMaterial(0, GoldenMaterial);
+	GeometryCollectionComponent->SetMaterial(0, GoldenMaterial);
+}
+
+void AThrownItem::GrantGold()
+{
+	if (!bIsGolden) return;
+	AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (VRPawn)
+	{
+		VRPawn->bGotGolden = true;
+		UE_LOG(LogTemp, Log, TEXT("Player got the Golden Mug!"));
+	}
 }

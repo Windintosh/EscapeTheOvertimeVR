@@ -58,3 +58,14 @@ int32 UETOGameInstance::LoadTQAmmoCount()
 	return TQAmmoCount;
 }
 
+void UETOGameInstance::SaveGotGolden(bool bGot)
+{
+	bPlayerGotGolden = bGot;
+	//UE_LOG(LogTemp, Warning, TEXT("Saved Player got Golden: %s"), bPlayerGotGolden);
+}
+
+bool UETOGameInstance::LoadGotGolden()
+{
+	return bPlayerGotGolden;
+}
+

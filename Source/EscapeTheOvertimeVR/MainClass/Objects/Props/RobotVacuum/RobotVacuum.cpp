@@ -61,7 +61,9 @@ void ARobotVacuum::OnPropOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (Ammo)
 	{
 		ActivateProp(OtherActor);
+        return;
 	}
+    StartRVMovement();
 }
 
 void ARobotVacuum::ActivateProp(AActor* Activator)

@@ -50,4 +50,10 @@ public:
 	int32 LoadDistractionItemCount();
 
 	int32 LoadTQAmmoCount();
+
+	bool bPlayerGotGolden = false;
+
+	void SaveGotGolden(bool bGot);
+
+	bool LoadGotGolden();
 };
