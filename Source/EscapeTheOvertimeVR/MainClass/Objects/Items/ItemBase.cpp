@@ -121,7 +121,7 @@ void AItemBase::Grab_Implementation(USceneComponent* HandController)
 	{
 		RootPrim->SetSimulatePhysics(false);
 	}
-
+	if(StaticMesh) StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttachToComponent(HandController, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
 }
 
@@ -134,8 +134,16 @@ void AItemBase::Release_Implementation(FVector ThrowVelocity)
 	if (RootPrim)
 	{
 		RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		if(!bIsGimmickItem) RootPrim->SetSimulatePhysics(true);
+		if (!bIsGimmickItem)
+		{
+			RootPrim->SetSimulatePhysics(true);
+		}
 		RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
+	}
+	if (StaticMesh)
+	{
+		StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		StaticMesh->SetSimulatePhysics(true);
 	}
 }
 
@@ -143,5 +151,3 @@ void AItemBase::OnAction_Implementation(float Value)
 {
 
 }
-
-//flag for the file change

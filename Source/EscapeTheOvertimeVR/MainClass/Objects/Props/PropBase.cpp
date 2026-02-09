@@ -64,10 +64,10 @@ void APropBase::Grab_Implementation(USceneComponent* HandController)
 	// 3. 충돌 처리: 잡고 있는 동안은 Pawn과 부딪히지 않게 함 (떨림 방지)
 	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
-	if (bIsGimmickProp)
-	{
+	//if (bIsGimmickProp)
+	//{
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	//}
 
 	// 4. 손에 부착 (SnapToTarget을 쓰면 손 위치로 강제 이동, KeepWorld는 잡은 위치 유지)
 	// 여기서는 자연스러운 잡기를 위해 KeepWorld를 추천하지만, 
@@ -84,6 +84,7 @@ void APropBase::Release_Implementation(FVector ThrowVelocity)
 	if(bIsGimmickProp)
 	{
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		//StaticMesh->SetSimulatePhysics(true);
 	}
 
 	// 2. 투척 속도 체크 (기준값 300.0f 등은 테스트하며 조절)
@@ -119,6 +120,12 @@ void APropBase::Release_Implementation(FVector ThrowVelocity)
 			RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			if(!bIsGimmickProp) RootPrim->SetSimulatePhysics(true);
 			RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
+		}
+		if(StaticMesh)
+		{
+			StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			//StaticMesh->SetSimulatePhysics(true);
+			//StaticMesh->SetPhysicsLinearVelocity(ThrowVelocity);
 		}
 	}
 }

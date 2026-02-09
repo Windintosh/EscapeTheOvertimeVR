@@ -23,7 +23,7 @@ void AKeycardReader::ActivateProp(AActor* Activator)
 	if (!Keycard) return;
 
 	// 카드키 소지 여부 확인 (Keycard.cpp에서 true로 설정된 값)
-	if (Keycard)
+	if (Keycard && !bIsAccessGranted)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Keycard Access Granted."));
 
@@ -48,6 +48,7 @@ void AKeycardReader::ActivateProp(AActor* Activator)
 				UE_LOG(LogTemp, Warning, TEXT("Elevator Door opening..."));
 			}
 		}
+		bIsAccessGranted = true; // 접근 허가 상태로 변경
 	}
 	else
 	{
