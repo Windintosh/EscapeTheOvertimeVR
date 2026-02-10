@@ -48,6 +48,9 @@ protected:
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
 	UPROPERTY(EditAnywhere, Category = "Item")
+	bool bIsGrabbable = true;
+
+	UPROPERTY(EditAnywhere, Category = "Item")
 	bool bIsGimmickProp = false;
 
 public:	

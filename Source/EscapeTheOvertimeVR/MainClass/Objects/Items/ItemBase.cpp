@@ -120,6 +120,11 @@ void AItemBase::Grab_Implementation(USceneComponent* HandController)
 	if (RootPrim)
 	{
 		RootPrim->SetSimulatePhysics(false);
+		// [중요] 충돌을 아예 끄지 말고(NoCollision X), Query(오버랩 감지)는 켜둬야 함!
+		RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+		// [중요] Pawn(NPC)과는 겹침(Overlap)이 발생하도록 설정
+		RootPrim->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 	if(StaticMesh) StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttachToComponent(HandController, FAttachmentTransformRules::SnapToTargetNotIncludingScale, NAME_None);
@@ -143,7 +148,7 @@ void AItemBase::Release_Implementation(FVector ThrowVelocity)
 	if (StaticMesh)
 	{
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		StaticMesh->SetSimulatePhysics(true);
+		//StaticMesh->SetSimulatePhysics(true);
 	}
 }
 

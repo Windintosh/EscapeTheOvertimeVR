@@ -74,8 +74,8 @@ void ABossAIController::OnPossess(APawn* InPawn)
 	}
 
 	// 0.5초 뒤 패트롤 지점 초기화 (월드 로딩 대기)
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABossAIController::InitializePatrolPoints, 0.5f, false);
+	//FTimerHandle TimerHandle;
+	//GetWorldTimerManager().SetTimer(TimerHandle, this, &ABossAIController::InitializePatrolPoints, 0.5f, false);
 }
 
 void ABossAIController::InitializePatrolPoints()

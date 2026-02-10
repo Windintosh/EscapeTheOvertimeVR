@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Doors/DoorBase.h"
@@ -15,6 +15,9 @@ class ESCAPETHEOVERTIMEVR_API ARestroomDoor : public ADoorBase
 public:
 
 	ARestroomDoor();
+
+	UFUNCTION(BlueprintCallable, Category = "Door")
+	void OpenDoorFromOthers();
 
 protected:
 

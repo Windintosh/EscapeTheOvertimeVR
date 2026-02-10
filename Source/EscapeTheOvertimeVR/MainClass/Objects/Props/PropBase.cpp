@@ -58,11 +58,12 @@ void APropBase::DestroyProp()
 
 void APropBase::Grab_Implementation(USceneComponent* HandController)
 {
+	if (!bIsGrabbable) return;
 	// 1. 물리 끄기 (손에 붙이기 위해)
 	Collision->SetSimulatePhysics(false);
 
 	// 3. 충돌 처리: 잡고 있는 동안은 Pawn과 부딪히지 않게 함 (떨림 방지)
-	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
 	//if (bIsGimmickProp)
 	//{

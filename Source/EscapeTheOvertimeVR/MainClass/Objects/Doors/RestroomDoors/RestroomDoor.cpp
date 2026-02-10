@@ -1,9 +1,13 @@
-#include "MainClass/Objects/Doors/RestroomDoors/RestroomDoor.h"
-#include "RestroomDoor.h"
+﻿#include "MainClass/Objects/Doors/RestroomDoors/RestroomDoor.h"
 
 ARestroomDoor::ARestroomDoor()
 {
 
+}
+
+void ARestroomDoor::OpenDoorFromOthers()
+{
+	OpenDoor();
 }
 
 void ARestroomDoor::BeginPlay()
