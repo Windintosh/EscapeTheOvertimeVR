@@ -38,6 +38,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	UAnimMontage* AttackMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UAnimMontage* HitMontage; //BTTask
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UAnimMontage* StunMontage; //BTTask
+
+
 	/** Behavior Tree(Task)에서 호출할 공격 함수 */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	virtual void Attack(); // 자식에서 확장 가능하도록 virtual 유지

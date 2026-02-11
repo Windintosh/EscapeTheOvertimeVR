@@ -56,6 +56,7 @@ public class EscapeTheOvertimeVR : ModuleRules
             "EscapeTheOvertimeVR/MainClass/Characters/Boss",
             "EscapeTheOvertimeVR/MainClass/Characters/Dancer",
             "EscapeTheOvertimeVR/MainClass/Characters/VRCharacterPawn",
+			"EscapeTheOvertimeVR/MainClass/Characters/Creatures",
             "EscapeTheOvertimeVR/MainClass/Game",
             "EscapeTheOvertimeVR/MainClass/Game/AnimNotifies",
             "EscapeTheOvertimeVR/Variant_Horror",
