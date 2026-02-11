@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -44,7 +44,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void Interact(AActor* Interactor);
-	void Interact_Implementation(AActor* Interactor) override;
+	virtual void Interact_Implementation(AActor* Interactor) override;
 
 	static const FName StunKey;
 
@@ -56,5 +56,18 @@ protected: // (private에서 protected로 변경 권장: 자식 클래스에서�
 	/** 몽타주 재생이 끝났을 때 호출되는 콜백 함수 */
 	UFUNCTION()
 	virtual void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Stats")
+	float Health = 300.f;
+
+	virtual void OnDeath();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boss Stats")
+	void HandleDeath();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Boss Stats")
+	bool bIsDead = false;
 
 };

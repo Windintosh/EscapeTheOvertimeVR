@@ -111,3 +111,29 @@ void ABoss::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 	UE_LOG(LogTemp, Warning, TEXT("Boss: Attack Finished."));
 }
+
+float ABoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (ActualDamage > 0)
+	{
+		Health -= ActualDamage;
+
+		if (Health <= 0) 
+		{
+			Health = 0;
+			OnDeath();
+		}
+	}
+	return ActualDamage;
+}
+
+void ABoss::OnDeath()
+{
+	ABossAIController* AIController = Cast<ABossAIController>(GetController());
+	AIController->GetBrainComponent()->StopLogic("Boss Died");
+	GetCharacterMovement()->DisableMovement();
+	bIsDead = true; //Flag -> set  animation in ABP
+	HandleDeath();
+}

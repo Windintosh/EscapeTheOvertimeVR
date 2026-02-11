@@ -55,7 +55,7 @@ void AThrownItem::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
-	if (bIsBroken || (OtherActor == nullptr) || (OtherActor == this) || (OtherActor == GetInstigator()))
+	if (bIsBroken || (OtherActor == nullptr) || (OtherActor == this) || (OtherActor == GetInstigator()) || (OtherActor == GetWorld()->GetFirstPlayerController()->GetPawn()))
 	{
 		return;
 	}
