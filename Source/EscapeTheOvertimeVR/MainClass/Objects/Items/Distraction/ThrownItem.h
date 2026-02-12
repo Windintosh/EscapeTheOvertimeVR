@@ -6,8 +6,8 @@
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "VRGrabInterface.h"
 #include "Engine/DamageEvents.h"
-#include "ThrownItem.generated.h"
 #include "Sound/SoundCue.h"
+#include "ThrownItem.generated.h"
 
 /**
  * 
