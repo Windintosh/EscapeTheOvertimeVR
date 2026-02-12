@@ -7,6 +7,7 @@
 #include "VRGrabInterface.h"
 #include "Engine/DamageEvents.h"
 #include "ThrownItem.generated.h"
+#include "Sound/SoundCue.h"
 
 /**
  * 
@@ -106,4 +107,7 @@ public:
 	void ChangeToGoldenItem();
 
 	void GrantGold();
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundCue* CrashSound;
 };

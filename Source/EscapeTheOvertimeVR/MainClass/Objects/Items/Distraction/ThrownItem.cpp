@@ -75,6 +75,12 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 
 	bIsBroken = true;
 
+	if (CrashSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, CrashSound, GetActorLocation());
+	}
+
+
 	//ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	//AHorrorCharacter* GameCharacter = Cast<AHorrorCharacter>(PlayerCharacter);
 	////ABoss* BossCharacter = Cast<ABoss>(PlayerCharacter);
