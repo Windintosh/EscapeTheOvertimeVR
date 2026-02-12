@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/SinkDoors/SinkDoor.h"
+﻿#include "MainClass/Objects/Doors/SinkDoors/SinkDoor.h"
 
 ASinkDoor::ASinkDoor()
 {
@@ -32,4 +32,10 @@ void ASinkDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetYaw = InitialYaw - MovableYaw;
+}
+
+void ASinkDoor::OpenDoor()
+{
+	Super::OpenDoor();
+	bIsUnclosable = true;
 }

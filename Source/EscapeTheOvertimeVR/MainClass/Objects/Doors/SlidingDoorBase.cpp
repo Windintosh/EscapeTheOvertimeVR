@@ -49,6 +49,7 @@ void ASlidingDoorBase::OpenDoor()
 	}
 	//UpdateDoorMovement(1.0f);
 	bIsOpen = true;
+	bIsUnclosable = true;
 }
 
 void ASlidingDoorBase::CloseDoor()

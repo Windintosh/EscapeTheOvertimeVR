@@ -66,7 +66,7 @@ public:
 	UFUNCTION()
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
-	void OpenDoor();
+	virtual void OpenDoor();
 
 	virtual void CloseDoor();
 

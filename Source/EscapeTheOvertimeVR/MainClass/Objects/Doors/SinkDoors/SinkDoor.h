@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MainClass/Objects/Doors/DoorBase.h"
@@ -18,4 +18,6 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	virtual void OpenDoor() override;
 };

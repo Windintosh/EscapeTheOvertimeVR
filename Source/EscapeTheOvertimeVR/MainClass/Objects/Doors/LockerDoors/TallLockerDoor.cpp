@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/LockerDoors/TallLockerDoor.h"
+﻿#include "MainClass/Objects/Doors/LockerDoors/TallLockerDoor.h"
 
 ATallLockerDoor::ATallLockerDoor()
 {
@@ -39,4 +39,11 @@ ATallLockerDoor::ATallLockerDoor()
 void ATallLockerDoor::BeginPlay()
 {
 	Super::BeginPlay(); //4 41 234
+}
+
+void ATallLockerDoor::OpenDoor()
+{
+	Super::OpenDoor();
+
+	bIsUnclosable = true;
 }

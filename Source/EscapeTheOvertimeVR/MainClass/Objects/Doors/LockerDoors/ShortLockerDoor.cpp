@@ -1,4 +1,4 @@
-#include "MainClass/Objects/Doors/LockerDoors/ShortLockerDoor.h"
+﻿#include "MainClass/Objects/Doors/LockerDoors/ShortLockerDoor.h"
 
 AShortLockerDoor::AShortLockerDoor()
 {
@@ -39,4 +39,10 @@ AShortLockerDoor::AShortLockerDoor()
 void AShortLockerDoor::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AShortLockerDoor::OpenDoor()
+{
+	Super::OpenDoor();
+	bIsUnclosable = true;
 }
