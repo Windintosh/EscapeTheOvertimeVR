@@ -5,13 +5,15 @@
 #include "HorrorCharacter.h"
 #include "VRCharacterPawn.h"
 #include "HorrorPlayerController.h"
+#include "Engine/OverlapResult.h"
 
 void AETOGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
 	LoadStuffs();
-	SpawnRandomItems();
+	FString CurrentMapName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	if (CurrentMapName == "FirstMap") SpawnRandomItems();
 
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
@@ -69,8 +71,9 @@ void AETOGameState::SpawnRandomItems()
 				UE_LOG(LogTemp, Warning, TEXT("Spawn Failed at point %d. Ignoring this spawner."), index);
 			}
 		}
-		if (index == ItemSpots.Num() - 1) //if no keycard has spawned, do it again
+		if (index == ItemSpots.Num() - 1) 
 		{
+			/* //if no keycard has spawned, do it again
 			index = -1;
 			loopcount = 0;
 			UE_LOG(LogTemp, Display, TEXT("No Keycard; retrying"));
@@ -82,6 +85,45 @@ void AETOGameState::SpawnRandomItems()
 				if (NoMore)
 				{	
 					NoMore->DestroyItem();
+				}
+			}
+			*/
+			int32 NewRandIndex = FMath::RandRange(0, ItemSpots.Num() - 1);
+			AItemSpawner* NewSpawnPoint = Cast<AItemSpawner>(ItemSpots[NewRandIndex]);
+			if (NewSpawnPoint)
+			{
+				FVector StartLocation = NewSpawnPoint->GetActorLocation();
+				FCollisionShape Sphere = FCollisionShape::MakeSphere(50.f);
+				FCollisionQueryParams QueryParams;
+				QueryParams.AddIgnoredActor(NewSpawnPoint);
+
+				TArray<FOverlapResult> OverlapResults;
+				bool bHasOverlap = GetWorld()->OverlapMultiByChannel(
+					OverlapResults,
+					StartLocation,
+					FQuat::Identity,
+					ECC_WorldDynamic, //channel of items
+					Sphere,
+					QueryParams
+				);
+				if (bHasOverlap)
+				{
+					for (const FOverlapResult& Result : OverlapResults)
+					{
+						AActor* HitActor = Result.GetActor();
+						if (HitActor && HitActor->IsA(AItemBase::StaticClass()))
+						{
+							UE_LOG(LogTemp, Display, TEXT("Destroying overlapping item: %s"), *HitActor->GetName());
+							HitActor->Destroy();
+						}
+					}
+				}
+
+				AActor* SpawnedActor = NewSpawnPoint->SpawnItem(0); //force spawn keycard
+				if (SpawnedActor)
+				{
+					UE_LOG(LogTemp, Display, TEXT("Keycard Forced Spawned at point %d"), NewRandIndex);
+					bIsKeycardSpawned = true;
 				}
 			}
 		}
