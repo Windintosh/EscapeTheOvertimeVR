@@ -19,4 +19,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Attack() override;
+
+	virtual void OnDeath() override;
 };

@@ -16,7 +16,7 @@ void ADoggyX::BeginPlay()
 void ADoggyX::Attack()
 {
 	FVector StartLocation = GetActorLocation();
-	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(100.f);
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(200.f);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this); // 나 자신은 무시
@@ -31,7 +31,7 @@ void ADoggyX::Attack()
 		Params
 	);
 
-	DrawDebugSphere(GetWorld(), StartLocation, 100.f, 12, bHit ? FColor::Red : FColor::Blue, false, 1.0f);
+	DrawDebugSphere(GetWorld(), StartLocation, 200.f, 12, bHit ? FColor::Red : FColor::Blue, false, 3.0f);
 
 	if(bHit)
 	{
@@ -49,4 +49,10 @@ void ADoggyX::Attack()
 	//effects, sound 등 추가 가능
 
 	Destroy(); // 공격 후 자신을 제거
+}
+
+void ADoggyX::OnDeath()
+{
+	Attack();
+	//Super::OnDeath();
 }

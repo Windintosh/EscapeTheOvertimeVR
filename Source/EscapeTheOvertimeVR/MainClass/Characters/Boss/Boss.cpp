@@ -133,6 +133,7 @@ void ABoss::OnDeath()
 {
 	ABossAIController* AIController = Cast<ABossAIController>(GetController());
 	AIController->GetBrainComponent()->StopLogic("Boss Died");
+	StopAnimMontage();
 	GetCharacterMovement()->DisableMovement();
 	bIsDead = true; //Flag -> set  animation in ABP
 	HandleDeath();
