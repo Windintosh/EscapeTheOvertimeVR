@@ -47,6 +47,7 @@ public class EscapeTheOvertimeVR : ModuleRules
             "EscapeTheOvertimeVR/MainClass/Objects/Items/TQAmmo",
             "EscapeTheOvertimeVR/MainClass/Objects/Props",
             "EscapeTheOvertimeVR/MainClass/Objects/Props/KeycardReader",
+            "EscapeTheOvertimeVR/MainClass/Objects/Props/BloodSample",
             "EscapeTheOvertimeVR/MainClass/Objects/Props/RobotVacuum",
             "EscapeTheOvertimeVR/MainClass/Objects/Props/MainDoorLock",
             "EscapeTheOvertimeVR/MainClass/Objects/WorldObjects",
