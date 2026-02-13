@@ -10,7 +10,7 @@ ADoorBase::ADoorBase()
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	SetRootComponent(BoxComp); // RootComponent = BoxComp;
 	BoxComp->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	BoxComp->SetBoxExtent(FVector(30.f, 74.f, 147.f));
+	BoxComp->SetBoxExtent(FVector(30.f, 74.f, 147.f)); //y,z /2
 	BoxComp->SetRelativeLocation(FVector(0.f, 0.f, 147.f), false);
 	BoxComp->SetCanEverAffectNavigation(false);
 

@@ -66,8 +66,10 @@ public:
 	UFUNCTION()
 	virtual void Release_Implementation(FVector ThrowVelocity) override;
 
+	UFUNCTION(BlueprintCallable)
 	virtual void OpenDoor();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void CloseDoor();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")

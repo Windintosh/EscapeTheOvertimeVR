@@ -38,6 +38,7 @@ public class EscapeTheOvertimeVR : ModuleRules
             "EscapeTheOvertimeVR/MainClass/Objects/Doors/RestroomDoors",
             "EscapeTheOvertimeVR/MainClass/Objects/Doors/LockerDoors",
             "EscapeTheOvertimeVR/MainClass/Objects/Doors/SinkDoors",
+            "EscapeTheOvertimeVR/MainClass/Objects/Doors/AltarDoors",
             "EscapeTheOvertimeVR/MainClass/Objects/Items",
             "EscapeTheOvertimeVR/MainClass/Objects/Items/Keycard",
             "EscapeTheOvertimeVR/MainClass/Objects/Items/Distraction",
