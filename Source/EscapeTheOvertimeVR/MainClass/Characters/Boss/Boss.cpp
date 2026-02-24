@@ -4,7 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BossAIController.h"
+//#include "BossAIController.h"
 #include "ThrownItem.h"
 
 const FName ABoss::StunKey = TEXT("IsStunned");

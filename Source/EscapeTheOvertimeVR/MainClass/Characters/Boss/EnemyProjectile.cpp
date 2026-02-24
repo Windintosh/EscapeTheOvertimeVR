@@ -1,4 +1,4 @@
-#include "MainClass/Characters/Boss/EnemyProjectile.h"
+﻿#include "MainClass/Characters/Boss/EnemyProjectile.h"
 #include "Variant_Horror/HorrorCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -63,7 +63,7 @@ void AEnemyProjectile::OnPlayerOverlap(UPrimitiveComponent* OverlappedComp, AAct
 		// 3. 엔진 표준 대미지 전달 함수 호출
 		UGameplayStatics::ApplyDamage(
 			OtherActor,                     // 맞는 사람
-			20.0f,                          // 대미지 양
+			Damage,                          // 대미지 양
 			OwnerController,                // 때린 사람의 컨트롤러 (Instigator)
 			this,                           // 대미지를 가한 도구 (Projectile)
 			UDamageType::StaticClass()      // 대미지 타입 (기본형)
