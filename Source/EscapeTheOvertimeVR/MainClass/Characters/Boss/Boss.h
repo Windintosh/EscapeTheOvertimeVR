@@ -59,6 +59,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsAttacking = false;
 
+	void KillBoss();
+
 protected: // (private에서 protected로 변경 권장: 자식 클래스에서도 접근 가능하게)
 	/** 몽타주 재생이 끝났을 때 호출되는 콜백 함수 */
 	UFUNCTION()

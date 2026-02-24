@@ -104,6 +104,12 @@ void ABoss::Interact_Implementation(AActor* Interactor)
 	BlackboardComp->SetValueAsBool(StunKey, true);
 }
 
+void ABoss::KillBoss()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s is killed!"), *GetName());
+	OnDeath();
+}
+
 void ABoss::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	// [수정 3] 공격 종료 시 상태 해제 (다시 이동/공격 가능)

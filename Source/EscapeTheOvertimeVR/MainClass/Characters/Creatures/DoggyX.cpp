@@ -5,7 +5,7 @@
 
 ADoggyX::ADoggyX()
 {
-
+	Health = 20.f;
 }
 
 void ADoggyX::BeginPlay()

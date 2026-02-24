@@ -103,7 +103,8 @@ void AThrownItem::OnItemHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	{
 		ActivateItem(OtherActor); //do sth to boss
 
-		Damage = 20.f + ImpactForce * 0.01;
+		if (bIsGolden) Damage = 50.f + ImpactForce * 0.02;
+		else Damage = 20.f + ImpactForce * 0.01;
 
 		OtherActor->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
 		UE_LOG(LogTemp, Log, TEXT("%f Damage Applied to %s"), Damage, *OtherActor->GetName());
