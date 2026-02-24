@@ -99,24 +99,24 @@ void ANumberPad::PressEnter()
 
 void ANumberPad::UpdateDisplay()
 {
-    // [보안 장치] 블루프린트에서 슬롯을 연결 안 했을 경우 에러 출력
+    // [수정] Fatal에서 Error로 변경하여 엔진 종료(Crash)를 방지합니다.
     if (DisplaySlots.Num() == 0)
     {
-        UE_LOG(LogTemp, Fatal, TEXT("[NumberPad] DisplaySlots array is EMPTY! You MUST add TextRender components to the array in Blueprint."));
-        return;
+        // 렌더링 로그에는 남지만, 엔진이 꺼지지는 않습니다.
+        UE_LOG(LogTemp, Error, TEXT("[NumberPad] DisplaySlots array is EMPTY! Check your Blueprint. Skipping update to avoid crash."));
+        return; // 배열이 비었으므로 아래 루프를 타지 않고 함수를 빠져나갑니다.
     }
 
+    // 기존 루프 로직 시작
     for (int32 i = 0; i < 4; i++)
     {
         if (!DisplaySlots.IsValidIndex(i) || !DisplaySlots[i]) continue;
 
         if (i < CurrentInput.Len())
         {
-            // 한 글자씩 잘라서 표시
             FString CharStr = CurrentInput.Mid(i, 1);
             DisplaySlots[i]->SetText(FText::FromString(CharStr));
 
-            // 순서에 맞는 색상 적용
             if (SlotColors.IsValidIndex(i))
             {
                 DisplaySlots[i]->SetTextRenderColor(SlotColors[i].ToFColor(true));
@@ -124,7 +124,6 @@ void ANumberPad::UpdateDisplay()
         }
         else
         {
-            // 입력 안 된 칸은 공백
             DisplaySlots[i]->SetText(FText::FromString(TEXT(" ")));
         }
     }
