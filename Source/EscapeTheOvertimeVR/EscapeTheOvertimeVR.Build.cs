@@ -8,24 +8,29 @@ public class EscapeTheOvertimeVR : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] {
-			"Core",
-			"CoreUObject",
-			"Engine",
-			"InputCore",
-			"EnhancedInput",
-			"AIModule",
-			"StateTreeModule",
-			"GameplayStateTreeModule",
-			"UMG",
-			"Slate",
-			"NavigationSystem",
-			"GeometryCollectionEngine",
-			"HeadMountedDisplay", // 구형 VR API 지원
-			"XRBase"             // 최신 OpenXR 표준 지원 (필수)
-		});
+        // VR 환경에서의 안정적인 구동과 시네마틱, AI 기능을 위해 필요한 모듈들을 추가했습니다.
+        PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "EnhancedInput",
+            "AIModule",
+            "StateTreeModule",
+            "GameplayStateTreeModule",
+            "UMG",
+            "Slate",
+            "SlateCore",
+            "NavigationSystem",
+            "GeometryCollectionEngine",
+            "HeadMountedDisplay", // 구형 VR API 지원
+			"XRBase",             // 최신 OpenXR 표준 지원 (필수)
+			"LevelSequence",
+            "MovieScene",
+            "CinematicCamera"
+        });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+        PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"EscapeTheOvertimeVR",
@@ -61,6 +66,7 @@ public class EscapeTheOvertimeVR : ModuleRules
 			"EscapeTheOvertimeVR/MainClass/Characters/Creatures",
             "EscapeTheOvertimeVR/MainClass/Game",
             "EscapeTheOvertimeVR/MainClass/Game/AnimNotifies",
+            "EscapeTheOvertimeVR/MainClass/Game/CinematicControlInterface",
             "EscapeTheOvertimeVR/Variant_Horror",
 			"EscapeTheOvertimeVR/Variant_Horror/UI",
 			"EscapeTheOvertimeVR/Variant_Shooter",

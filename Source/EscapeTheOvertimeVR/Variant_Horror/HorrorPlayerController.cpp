@@ -1,97 +1,54 @@
 ﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
-
 #include "Variant_Horror/HorrorPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "Engine/LocalPlayer.h"
-#include "InputMappingContext.h"
-#include "EscapeTheOvertimeCameraManager.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
+#include "CineCameraActor.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
+#include "Blueprint/UserWidget.h"
 #include "HorrorCharacter.h"
 #include "HorrorUI.h"
-#include "EscapeTheOvertimeVR.h"
-#include "Widgets/Input/SVirtualJoystick.h"
+#include "Kismet/GameplayStatics.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
-	// set the player camera manager class
-	PlayerCameraManagerClass = AEscapeTheOvertimeCameraManager::StaticClass();
-
-	// [Time System] Tick 활성화 및 변수 초기화
 	PrimaryActorTick.bCanEverTick = true;
-	CurrentHour = 20;   //  시작 시간
+	CurrentHour = 20;
 	CurrentMinute = 0.0f;
-	TimeSpeed = 4.0f;  // 시간 흐름 속도 (조절 가능) -> .066667f -> 4.0f, was 20.f
-	bIsGameOver = false;
+	TimeSpeed = 4.0f;
 }
 
 void AHorrorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	OriginalPawn = GetPawn();
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Stage);
 
-	// only spawn touch controls on local player controllers
-	if (SVirtualJoystick::ShouldDisplayTouchInterface() && IsLocalPlayerController())
+	if (IsLocalPlayerController() && MobileControlsWidgetClass)
 	{
-		// spawn the mobile controls widget
 		MobileControlsWidget = CreateWidget<UUserWidget>(this, MobileControlsWidgetClass);
-
-		if (MobileControlsWidget)
-		{
-			// add the controls to the player screen
-			MobileControlsWidget->AddToPlayerScreen(0);
-
-		}
-		else {
-
-			UE_LOG(LogEscapeTheOvertimeVR, Error, TEXT("Could not spawn mobile controls widget."));
-
-		}
-
+		if (MobileControlsWidget) MobileControlsWidget->AddToPlayerScreen(0);
 	}
 }
 
-// [Time System] 매 프레임 시간 계산 로직
 void AHorrorPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bIsGameOver || bIsPaused) return;
 
-	if (bIsGameOver)
+	CurrentMinute += DeltaTime * TimeSpeed;
+	ElapsedTime += DeltaTime;
+
+	if (CurrentMinute >= 60.0f)
 	{
-		return;
-	}
-
-	if (!bIsPaused) //time passes when the game is not paused
-	{	
-
-		// 1. 분 누적
-		CurrentMinute += DeltaTime * TimeSpeed;
-
-		ElapsedTime += DeltaTime;
-
-		// 2. 시간 변환
-		if (CurrentMinute >= 60.0f)
+		CurrentMinute -= 60.0f;
+		CurrentHour++;
+		if (CurrentHour >= 24)
 		{
-			CurrentMinute -= 60.0f;
-			CurrentHour++;
-
-			// 3. 자정(24시) 체크 - [수정된 부분]
-			if (CurrentHour >= 24)
-			{
-				bIsGameOver = true;
-				CurrentHour = 0;
-
-				// 현재 빙의 중인 캐릭터(HorrorCharacter)를 가져옴
-				if (AHorrorCharacter* MyCharacter = Cast<AHorrorCharacter>(GetPawn()))
-				{
-					// 1. 사망 원인을 'TimeOver'로 설정
-					MyCharacter->SetDeathLocation(EDeathLocationType::TimeOver);
-
-					// 2. 캐릭터 사망 처리 실행 (이러면 자동으로 시네마틱 요청 신호가 감)
-					MyCharacter->OnDeath();
-				}
-
-				// (기존 코드) 필요하다면 남겨두세요 (UI 연출 등)
-				OnTimeLimitReached();
-			}
+			bIsGameOver = true;
+			if (AHorrorCharacter* MyChar = Cast<AHorrorCharacter>(GetPawn())) MyChar->OnDeath();
+			OnTimeLimitReached();
 		}
 	}
 }
@@ -99,49 +56,29 @@ void AHorrorPlayerController::Tick(float DeltaTime)
 void AHorrorPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-
-	// only spawn UI on local player controllers
-	if (IsLocalPlayerController())
+	if (IsLocalPlayerController() && aPawn && HorrorUIClass)
 	{
-		// set up the UI for the character
+		if (!HorrorUI)
+		{
+			HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
+			if (HorrorUI) HorrorUI->AddToViewport(0);
+		}
 		if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(aPawn))
 		{
-			// create the UI
-			if (!HorrorUI)
-			{
-				HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
-				HorrorUI->AddToViewport(0);
-			}
-
-			HorrorUI->SetupCharacter(HorrorCharacter);
+			if (HorrorUI) HorrorUI->SetupCharacter(HorrorCharacter);
 		}
 	}
-
 }
 
 void AHorrorPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
-	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
 	{
-		// Add Input Mapping Contexts
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
-			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
-			{
-				Subsystem->AddMappingContext(CurrentContext, 0);
-			}
-
-			// only add these IMCs if we're not using mobile touch input
-			if (!SVirtualJoystick::ShouldDisplayTouchInterface())
-			{
-				for (UInputMappingContext* CurrentContext : MobileExcludedMappingContexts)
-				{
-					Subsystem->AddMappingContext(CurrentContext, 0);
-				}
-			}
+			for (UInputMappingContext* Context : DefaultMappingContexts) Subsystem->AddMappingContext(Context, 0);
+			for (UInputMappingContext* Context : MobileExcludedMappingContexts) Subsystem->AddMappingContext(Context, 0);
 		}
 	}
 }
@@ -149,5 +86,63 @@ void AHorrorPlayerController::SetupInputComponent()
 void AHorrorPlayerController::InitCurrentTime()
 {
 	CurrentHour = 20;
-	CurrentMinute = 0;
+	CurrentMinute = 0.0f;
+	ElapsedTime = 0.0f;
+}
+
+/* ===============================
+   🎬 Cinematic System Implementation (Fixed C2661)
+   =============================== */
+
+void AHorrorPlayerController::StartCinematic_Implementation(ALevelSequenceActor* SequenceActor, ACineCameraActor* CameraActor)
+{
+	if (!SequenceActor || !CameraActor || !CinematicPawnClass) return;
+
+	bIsPaused = true;
+	OriginalPawn = GetPawn();
+
+	// [수정] UE5 SetCinematicMode는 5개의 인자를 받습니다.
+	// (bInCinematicMode, bHidePlayer, bAffectsHUD, bAffectsMovement, bAffectsTurning)
+	SetCinematicMode(true, true, true, true, true);
+
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	CinematicPawnInstance = GetWorld()->SpawnActor<APawn>(CinematicPawnClass, CameraActor->GetActorTransform(), SpawnParams);
+
+	if (CinematicPawnInstance) Possess(CinematicPawnInstance);
+
+	SetViewTargetWithBlend(SequenceActor, 0.0f);
+
+	if (ULevelSequencePlayer* SeqPlayer = SequenceActor->GetSequencePlayer())
+	{
+		SeqPlayer->OnFinished.RemoveAll(this);
+		SeqPlayer->OnFinished.AddDynamic(this, &AHorrorPlayerController::Internal_OnCinematicFinished);
+		SeqPlayer->Play();
+	}
+}
+
+void AHorrorPlayerController::Internal_OnCinematicFinished()
+{
+	ICinematicControlInterface::Execute_EndCinematic(this);
+}
+
+void AHorrorPlayerController::EndCinematic_Implementation()
+{
+	if (OriginalPawn)
+	{
+		Possess(OriginalPawn);
+		SetViewTargetWithBlend(OriginalPawn, 0.2f);
+	}
+
+	if (CinematicPawnInstance)
+	{
+		CinematicPawnInstance->Destroy();
+		CinematicPawnInstance = nullptr;
+	}
+
+	// [수정] 5개 인자로 통일
+	SetCinematicMode(false, false, false, false, false);
+	bIsPaused = false;
 }
