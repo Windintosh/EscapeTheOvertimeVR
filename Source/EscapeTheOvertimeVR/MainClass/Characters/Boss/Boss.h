@@ -59,6 +59,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsAttacking = false;
 
+	UFUNCTION(BlueprintCallable)
 	void KillBoss();
 
 protected: // (private에서 protected로 변경 권장: 자식 클래스에서도 접근 가능하게)

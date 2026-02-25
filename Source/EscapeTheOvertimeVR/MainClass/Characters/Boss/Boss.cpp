@@ -106,6 +106,7 @@ void ABoss::Interact_Implementation(AActor* Interactor)
 
 void ABoss::KillBoss()
 {
+	if (bIsDead) return;
 	UE_LOG(LogTemp, Warning, TEXT("%s is killed!"), *GetName());
 	OnDeath();
 }
@@ -137,8 +138,10 @@ float ABoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 
 void ABoss::OnDeath()
 {
+	if (bIsDead) return;
 	ABossAIController* AIController = Cast<ABossAIController>(GetController());
 	AIController->GetBrainComponent()->StopLogic("Boss Died");
+	AIController->ClearFocus(EAIFocusPriority::Gameplay);
 	StopAnimMontage();
 	GetCharacterMovement()->DisableMovement();
 	bIsDead = true; //Flag -> set  animation in ABP
