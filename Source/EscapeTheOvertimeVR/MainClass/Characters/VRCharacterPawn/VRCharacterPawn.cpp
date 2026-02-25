@@ -67,7 +67,9 @@ AVRCharacterPawn::AVRCharacterPawn()
 	RightHandMesh->SetupAttachment(RightHandController);
 	RightHandMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
 
-
+	DamagePostProcessComp = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessComponent"));
+	DamagePostProcessComp->SetupAttachment(VRCamera);
+	DamagePostProcessComp->bUnbound = false; // 카메라에만 적용 (월드 전체가 아닌)
 }
 
 // Called when the game starts or when spawned
@@ -87,6 +89,26 @@ void AVRCharacterPawn::BeginPlay()
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
 			}
 		}
+		
+		if (DamageVignetteMaterialBase && DamagePostProcessComp)
+		{
+			// 포스트 프로세스 머티리얼 인스턴스 생성
+			DamageMaterialInstance = UMaterialInstanceDynamic::Create(DamageVignetteMaterialBase, this);
+			if (DamageMaterialInstance)
+			{
+				/*
+				// 포스트 프로세스 컴포넌트에 머티리얼 추가
+				FWeightedBlendable Blendable;
+				Blendable.Object = PostProcessMaterialInstance;
+				Blendable.Weight = 1.0f; // 100% 효과
+				PostProcessComponent->Settings.WeightedBlendables.Array.Add(Blendable);
+				*/
+				// 또는 간단히 AddOrUpdateBlendable 함수 사용
+				DamageMaterialInstance->SetScalarParameterValue(TEXT("Intensity"), 0.0f);
+				DamagePostProcessComp->AddOrUpdateBlendable(DamageMaterialInstance);
+			}
+		}
+		
 	}
 
 	// [핵심] 부모가 만든 FPS 카메라 찾아서 끄기
@@ -117,6 +139,19 @@ void AVRCharacterPawn::BeginPlay()
 	}
 
 }
+
+
+
+float AVRCharacterPawn::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// 데미지 비네트 효과 시작
+	PlayDamageEffect();
+
+	return DamageAmount;
+}
+
 
 // Called every frame
 void AVRCharacterPawn::Tick(float DeltaTime)
@@ -560,5 +595,34 @@ void AVRCharacterPawn::PrintCurrentSlot()
 	// 화면에 띄워서 확인
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Slot: %s"), *SlotName));
 } //flag for the file change
+
+
+void AVRCharacterPawn::PlayDamageEffect()
+{
+	GetWorldTimerManager().ClearTimer(DamageEffectTimerHandle);
+
+	CurrentDamageIntensity = 1.0f; // 효과 시작 시 최대값
+
+	GetWorldTimerManager().SetTimer(DamageEffectTimerHandle, this, &AVRCharacterPawn::UpdateDamageEffect, 0.02f, true); // 약 30 FPS로 업데이트 = 0.033f
+
+	// (선택 사항) 카메라 흔들림 추가! 
+	// UGameplayStatics::PlayWorldCameraShake(...) 를 사용하면 더 역동적입니다.
+}
+
+void AVRCharacterPawn::UpdateDamageEffect()
+{
+	if (DamageMaterialInstance)
+	{
+		// 효과 감소
+		CurrentDamageIntensity -= 0.02f; // 0.02씩 감소 -> 약 1초 지속
+		if (CurrentDamageIntensity <= 0.0f)
+		{
+			CurrentDamageIntensity = 0.0f;
+			GetWorldTimerManager().ClearTimer(DamageEffectTimerHandle); // 타이머 종료
+		}
+		// 머티리얼에 현재 강도 전달
+		DamageMaterialInstance->SetScalarParameterValue(TEXT("Intensity"), CurrentDamageIntensity);
+	}
+}
 
 

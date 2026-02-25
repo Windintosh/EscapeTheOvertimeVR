@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "VRGrabInterface.h"
+#include "Components/PostProcessComponent.h"
 #include "VRCharacterPawn.generated.h"
 
 
@@ -33,6 +34,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 public:	
 	// Called every frame
@@ -174,5 +177,25 @@ protected:
 
 	// 이전 프레임의 오른손 위치
 	FVector LastRightHandLocation;
+	
+	//Post process component for visual effects (e.g., when picking up certain items)
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Effects")
+	UPostProcessComponent* DamagePostProcessComp;
 
+	UPROPERTY()
+	class UMaterialInstanceDynamic* DamageMaterialInstance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "VR Effects")
+	class UMaterialInterface* DamageVignetteMaterialBase;
+
+	FTimerHandle DamageEffectTimerHandle;
+	float CurrentDamageIntensity;
+
+public:
+	void PlayDamageEffect();
+
+private:
+	void UpdateDamageEffect();
+	
 };
