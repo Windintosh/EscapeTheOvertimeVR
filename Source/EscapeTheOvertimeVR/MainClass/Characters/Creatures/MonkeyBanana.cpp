@@ -24,7 +24,6 @@ AMonkeyBanana::AMonkeyBanana()
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, 360.f); // 초당 360도 회전
 
 	Damage = 10.f;
-	KnockbackStrength = 1000.f;
 }
 
 // Called when the game starts or when spawned
@@ -46,7 +45,7 @@ void AMonkeyBanana::OnPlayerOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 	Super::OnPlayerOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
 	//OtherComp->AddImpulse(ProjectileMovement->Velocity * 0.5f, NAME_None, true); // 충돌 시 플레이어에게 반동 추가
-	/*
+
 	// 부딪힌 대상이 캐릭터(플레이어)인지 확인합니다.
 	AVRCharacterPawn* HitPlayer = Cast<AVRCharacterPawn>(OtherActor);
 
@@ -64,7 +63,7 @@ void AMonkeyBanana::OnPlayerOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 		//float CurrentVelo = ProjectileMovement->Velocity.Size();
 
 		// 3. 밀쳐낼 힘(속도) 설정
-		//KnockbackStrength = ProjectileMovement->Velocity.Size() * 1.1f; // 이 값을 조절해서 밀쳐지는 거리를 맞추세요.
+		float KnockbackStrength = ProjectileMovement->Velocity.Size() * 1.1f; // 이 값을 조절해서 밀쳐지는 거리를 맞추세요.
 		FVector LaunchVelocity = KnockbackDir * KnockbackStrength;
 
 		// 4. 캐릭터 발사!
@@ -74,6 +73,5 @@ void AMonkeyBanana::OnPlayerOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 		// (선택) 바나나 파괴
 		Destroy();
 	}
-	*/
 }
 
