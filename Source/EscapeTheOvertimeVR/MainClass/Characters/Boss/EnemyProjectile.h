@@ -35,10 +35,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float Speed = 800.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float Damage = 20.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	float KnockbackStrength = 100.f;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void KnockbackPlayer(AActor* OtherActor);
 
 };
