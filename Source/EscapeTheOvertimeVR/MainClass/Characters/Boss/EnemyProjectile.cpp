@@ -1,5 +1,6 @@
 ﻿#include "MainClass/Characters/Boss/EnemyProjectile.h"
 #include "Variant_Horror/HorrorCharacter.h"
+#include "VRCharacterPawn.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -68,6 +69,8 @@ void AEnemyProjectile::OnPlayerOverlap(UPrimitiveComponent* OverlappedComp, AAct
 			this,                           // 대미지를 가한 도구 (Projectile)
 			UDamageType::StaticClass()      // 대미지 타입 (기본형)
 		);
+
+		KnockbackPlayer(PlayerCharacter);
 		
 		// 발사체 파괴
 		DestroyProjectile();
@@ -108,4 +111,36 @@ void AEnemyProjectile::Tick(float DeltaTime)
 		DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetScaledSphereRadius(), 12, FColor::Red, false, -1.0f);
 	}
 }
+
+void AEnemyProjectile::KnockbackPlayer(AActor* OtherActor)
+{
+		// 부딪힌 대상이 캐릭터(플레이어)인지 확인합니다.
+	AVRCharacterPawn* HitPlayer = Cast<AVRCharacterPawn>(OtherActor);
+
+	if (HitPlayer)
+	{
+		// 1. 밀려날 방향 계산 (바나나에서 플레이어를 향하는 방향)
+		FVector KnockbackDir = (HitPlayer->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+		// 2. [핵심] 위로 살짝 뜨게 만들기
+		// 단순히 뒤로만 밀면 바닥 마찰력 때문에 캐릭터가 질질 끌리다 멈춥니다.
+		// Z축 값을 살짝 올려서 공중에 띄워야 시원하게 밀려납니다!
+		KnockbackDir.Z = 0.5f;
+		KnockbackDir.Normalize();
+
+		//float CurrentVelo = ProjectileMovement->Velocity.Size();
+
+		// 3. 밀쳐낼 힘(속도) 설정
+		//KnockbackStrength = ProjectileMovement->Velocity.Size() * 1.1f; // 이 값을 조절해서 밀쳐지는 거리를 맞추세요.
+		FVector LaunchVelocity = KnockbackDir * KnockbackStrength;
+
+		// 4. 캐릭터 발사!
+		// 파라미터 2, 3번(bXYOverride, bZOverride)을 true로 하면 기존에 움직이던 관성을 무시하고 확 밀쳐냅니다.
+		HitPlayer->LaunchCharacter(LaunchVelocity, true, true);
+
+		// (선택) 바나나 파괴
+		Destroy();
+	}
+}
+
 
