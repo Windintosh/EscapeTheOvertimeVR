@@ -38,6 +38,12 @@ void AEnemyProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OnPlayerOverlap);
+
+	// 플레이어를 향해 날아가는 모드일 때만 방향을 계산합니다.
+	if (bShootTowardsPlayer)
+	{
+		FireAtPlayer();
+	}
 	
 }
 
@@ -93,6 +99,16 @@ void AEnemyProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*
+	// 1. 이번 프레임에 이동할 거리 계산 (방향 * 속도 * 시간)
+	FVector DeltaLocation = ShootDirection * Speed * DeltaTime;
+
+	// 2. 투사체 이동 적용
+	// bSweep 매개변수를 true로 설정하는 것이 아주 중요해!
+	// 그래야 이동하는 도중에 플레이어나 벽을 뚫고 지나가지 않고 Hit/Overlap 판정이 발생하거든.
+	AddActorWorldOffset(DeltaLocation, true);
+	*/
+	/*
 	FVector NewLocation = GetActorLocation() + GetActorForwardVector() * Speed * DeltaTime;
 
 	FHitResult Hit;
@@ -104,12 +120,53 @@ void AEnemyProjectile::Tick(float DeltaTime)
 	if (Hit.IsValidBlockingHit())
 	{
 		DestroyProjectile();
-	}	
+	}
 
 	if (Collision)
 	{
 		DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetScaledSphereRadius(), 12, FColor::Red, false, -1.0f);
 	}
+	*/
+
+	// 1. bool 변수에 따라 이동할 '방향(Direction)'을 먼저 결정합니다.
+	FVector MoveDirection;
+
+	if (bShootTowardsPlayer)
+	{
+		// 이전에 FireAtPlayer() 같은 함수에서 계산해둔 플레이어 방향을 사용합니다.
+		MoveDirection = ShootDirection;
+	}
+	else
+	{
+		// 기존처럼 액터가 바라보고 있는 정면 방향을 사용합니다.
+		MoveDirection = GetActorForwardVector();
+	}
+
+	// 2. 결정된 방향을 바탕으로 다음 위치를 계산합니다. (기존 코드 완벽 재활용!)
+	FVector NewLocation = GetActorLocation() + MoveDirection * Speed * DeltaTime;
+
+	FHitResult Hit;
+
+	SetActorLocation(NewLocation, true, &Hit); // bSweep = true to check collision
+
+	// (주의: Collision 포인터가 유효한지 먼저 체크해 주는 것이 안전합니다)
+	if (Collision)
+	{
+		Collision->UpdateOverlaps();
+	}
+
+	// 3. 충돌 처리 (기존 코드)
+	if (Hit.IsValidBlockingHit())
+	{
+		DestroyProjectile();
+	}
+
+	// 4. 디버그 스피어 그리기 (기존 코드)
+	if (Collision)
+	{
+		DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetScaledSphereRadius(), 12, FColor::Red, false, -1.0f);
+	}
+
 }
 
 void AEnemyProjectile::KnockbackPlayer(AActor* OtherActor)
@@ -141,6 +198,31 @@ void AEnemyProjectile::KnockbackPlayer(AActor* OtherActor)
 		// (선택) 바나나 파괴
 		Destroy();
 	}
+}
+
+void AEnemyProjectile::FireAtPlayer()
+{
+	// 1. 플레이어 캐릭터 찾기
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+
+	if (PlayerCharacter)
+	{
+		// 2. 시작점(투사체 위치)과 목표점(플레이어 위치) 구하기
+		FVector StartLocation = GetActorLocation();
+
+		// 플레이어의 가슴팍(중앙) 정도를 노리기 위해 Z축을 살짝 올려주면 더 좋아!
+		FVector TargetLocation = PlayerCharacter->GetActorLocation() + FVector(0.0f, 0.0f, 30.0f);
+
+		// 3. 방향 벡터 계산 및 정규화 (핵심 로직)
+		// (목표점 - 시작점)을 하면 방향이 나오는데, 거리에 상관없이 속도를 일정하게 
+		// 유지하기 위해 GetSafeNormal()로 길이를 1인 단위 벡터로 만들어 줘.
+		ShootDirection = (TargetLocation - StartLocation).GetSafeNormal();
+
+		// 4. (선택) 투사체가 날아가는 방향을 바라보도록 회전시키기
+		// 화살이나 마취총 탄환처럼 앞뒤가 있는 모델링이라면 꼭 넣어줘.
+		SetActorRotation(ShootDirection.Rotation());
+	}
+
 }
 
 

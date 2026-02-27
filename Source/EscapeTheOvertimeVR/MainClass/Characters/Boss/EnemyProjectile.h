@@ -41,10 +41,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float KnockbackStrength = 100.f;
 
+	// 투사체가 날아갈 고정된 방향
+	FVector ShootDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	bool bShootTowardsPlayer = false; // 플레이어를 향해 발사할지 여부
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void KnockbackPlayer(AActor* OtherActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void FireAtPlayer();
 
 };
