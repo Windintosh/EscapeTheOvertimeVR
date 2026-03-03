@@ -35,11 +35,13 @@ void ADoggyX::Attack()
 
 	if(bHit)
 	{
+		TSet<AActor*> DamagedActors;
 		for (const FOverlapResult& Result : OverlapResults)
 		{
 			AActor* HitActor = Result.GetActor();
-			if(HitActor && HitActor->IsA(AVRCharacterPawn::StaticClass())) //or change to AActor or sth
+			if(HitActor && HitActor->IsA(AVRCharacterPawn::StaticClass()) && !DamagedActors.Contains(HitActor)) 
 			{
+				DamagedActors.Add(HitActor);
 				UE_LOG(LogTemp, Warning, TEXT("DoggyX attacked: %s"), *HitActor->GetName());
 				// 여기에 데미지 처리 로직 추가 가능
 				HitActor->TakeDamage(20.f, FDamageEvent(), GetController(), this);
@@ -47,7 +49,7 @@ void ADoggyX::Attack()
 		}
 	}
 	//effects, sound 등 추가 가능
-
+	HandleDeath();
 	Destroy(); // 공격 후 자신을 제거
 }
 
