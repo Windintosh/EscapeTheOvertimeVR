@@ -224,7 +224,7 @@ void AVRCharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AVRCharacterPawn::SpawnAndEquip(TSubclassOf<AActor> ClassToSpawn, USceneComponent* HandMesh, AActor*& HeldActorRef)
 {
-	if (!ClassToSpawn || !HandMesh) return;
+	if (!ClassToSpawn || !HandMesh || bIsDead) return;
 
 	// 1. 손 위치에서 스폰
 	FVector SpawnLoc = HandMesh->GetComponentLocation();
@@ -265,7 +265,7 @@ void AVRCharacterPawn::GiveTranquilizer()
 void AVRCharacterPawn::TryGrabActor(USceneComponent* HandMesh, AActor*& OutHeldActor)
 {
 	// 1. 이미 뭔가를 잡고 있다면 무시
-	if (OutHeldActor) return;
+	if (OutHeldActor || bIsDead) return;
 
 	// 2. 구형 충돌 감지 설정
 	FVector HandLocation = HandMesh->GetComponentLocation();
@@ -442,6 +442,7 @@ void AVRCharacterPawn::OnGrabRight(const FInputActionValue& Value)
 
 void AVRCharacterPawn::Move(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
 	// 입력값 (X: 좌우, Y: 전후)
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -469,6 +470,8 @@ void AVRCharacterPawn::Move(const FInputActionValue& Value)
 
 void AVRCharacterPawn::Turn(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+
 	float TurnValue = Value.Get<float>();
 
 	// 데드존 처리 (살짝 건드린 건 무시)
@@ -492,6 +495,8 @@ void AVRCharacterPawn::ResetTurn()
 
 void AVRCharacterPawn::OnTriggerLeft(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+
 	// 왼손에 잡은 물건이 있고 + 인터페이스를 지원한다면
 	if (HeldActorLeft && HeldActorLeft->Implements<UVRGrabInterface>())
 	{
@@ -507,6 +512,7 @@ void AVRCharacterPawn::OnTriggerRight(const FInputActionValue& Value)
 	//	float Pressure = Value.Get<float>();
 	//	IVRGrabInterface::Execute_OnAction(HeldActorRight, Pressure);
 	//}
+	if (bIsDead) return;
 
 	float InputValue = Value.Get<float>();
 
@@ -535,6 +541,7 @@ void AVRCharacterPawn::OnTriggerRight(const FInputActionValue& Value)
 
 void AVRCharacterPawn::OnSprintStart(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
 	if (Value.Get<float>() > 0.5) {
 		// 부모 클래스(HorrorCharacter)의 달리기 시작 함수 호출
 		DoStartSprint();
@@ -554,6 +561,7 @@ void AVRCharacterPawn::OnSprintEnd(const FInputActionValue& Value)
 
 void AVRCharacterPawn::CycleItemNext(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
 	// 현재 값 + 1
 	uint8 NextVal = (uint8)CurrentItemSlot + 1;
 	if (NextVal >= (uint8)EItemSlot::Max)
@@ -567,6 +575,7 @@ void AVRCharacterPawn::CycleItemNext(const FInputActionValue& Value)
 
 void AVRCharacterPawn::CycleItemPrev(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
 	// 현재 값 - 1
 	uint8 PrevVal = (uint8)CurrentItemSlot;
 	if (PrevVal == 0)

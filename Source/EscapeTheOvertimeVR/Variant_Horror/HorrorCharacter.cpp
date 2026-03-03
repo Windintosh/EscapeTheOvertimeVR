@@ -1,4 +1,4 @@
-#include "Variant_Horror/HorrorCharacter.h" // 헤더 경로 유지
+﻿#include "Variant_Horror/HorrorCharacter.h" // 헤더 경로 유지
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,9 +9,10 @@
 #include "InputAction.h"
 #include "UObject/ConstructorHelpers.h" // FObjectFinder 사용 시 필수
 #include "Components/AudioComponent.h"
+#include "HorrorPlayerController.h"
 #include "Sound/SoundCue.h"
 
-bool AHorrorCharacter::GetSprintState()
+bool AHorrorCharacter::GetSprintState() const
 {
 	return bSprinting;
 }
@@ -181,11 +182,22 @@ void AHorrorCharacter::OnDeath_Implementation()
 		DisableInput(PC);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Player Died. Actor Name %s Calling Cinematic Logic, Location %d"), *GetName(), CurrentDeathLocation);
-	
-	// 하이브리드 연결: 현재 저장된 위치 태그(CurrentDeathLocation)를 블루프린트로 넘김
-	PlayGameOverCinematic(CurrentDeathLocation);
-}
+	if (AHorrorPlayerController* PC = Cast<AHorrorPlayerController>(GetController()))
+	{
+		if (PC->GetTimeLimitReached())
+		{
+			CurrentDeathLocation = EDeathLocationType::TimeOver;
+			// 하이브리드 연결: 현재 저장된 위치 태그(CurrentDeathLocation)를 블루프린트로 넘김
+			PlayGameOverCinematic(CurrentDeathLocation);
+			UE_LOG(LogTemp, Warning, TEXT("Player Died. Actor Name %s Calling Cinematic Logic, Location %d"), *GetName(), CurrentDeathLocation);
+		}
+		else
+		{
+			StunPlayer();
+			UE_LOG(LogTemp, Warning, TEXT("Player is stunned for 5 sec"));
+		}
+	}
+}	
 
 void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -320,6 +332,46 @@ void AHorrorCharacter::SprintFixedTick()
 
 	// broadcast the sprint meter updated delegate
 	OnSprintMeterUpdated.Broadcast(SprintMeter / SprintTime);
+}
+
+void AHorrorCharacter::StunPlayer()
+{
+	bIsDead = true;
+
+    // 1. 화면 서서히 암전 (1초 소요)
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    if (PC && PC->PlayerCameraManager)
+    {
+        PC->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, 1.0f, FLinearColor::Black, false, true);
+    }
+
+    // 2. 5초 뒤에 RecoverFromStun 함수 실행 (기절 지속 시간)
+    GetWorldTimerManager().SetTimer(StunTimerHandle, this, &AHorrorCharacter::RecoverFromStun, 5.0f, false);
+}
+
+void AHorrorCharacter::RecoverFromStun()
+{
+	bIsDead = false;
+
+    CurrentHP = MaxHP; // 체력 회복
+
+    // 3. 화면 다시 밝아짐 (검은색 -> 투명, 1초 소요)
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    if (PC)
+    {
+        if (PC->PlayerCameraManager)
+        {
+            PC->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.0f, FLinearColor::Black, false, false);
+        }
+        
+        // 기절 해제 시 입력을 다시 활성화
+        EnableInput(PC);
+    }
+
+	UE_LOG(LogTemp, Warning, TEXT("Player Recovered from Stun. Health Restored to %.1f"), CurrentHP);
+
+    // UI 업데이트
+    OnHealthChanged.Broadcast(CurrentHP / MaxHP);
 }
 
 //void AHorrorCharacter::ActivateSpeedUp()

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
@@ -172,7 +172,7 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	//void SetSpeedUpState(bool bNewState);
 
-	bool GetSprintState();
+	bool GetSprintState() const;
 
 	// 심장박동 사운드 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
@@ -227,5 +227,11 @@ protected:
 	// 나를 쫓고 있는 적의 수 (0명이 되면 소리 멈춤)
 	int32 ChasingEnemyCount = 0;
 
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void StunPlayer();
 
+	FTimerHandle StunTimerHandle;
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void RecoverFromStun();
 };

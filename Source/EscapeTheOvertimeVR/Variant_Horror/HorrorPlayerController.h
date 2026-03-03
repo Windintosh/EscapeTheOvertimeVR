@@ -95,6 +95,8 @@ public:
 	UPROPERTY()
 	UUserWidget* MobileControlsWidget;
 
+	bool GetTimeLimitReached() const { return bIsTimeLimitReached; }	
+
 protected:
 	/** 원래 조작하던 Pawn 저장용 */
 	UPROPERTY()
@@ -107,4 +109,7 @@ protected:
 	/** 시네마틱 재생용 VR 빈 폰 (BP에서 할당 필수) */
 	UPROPERTY(EditDefaultsOnly, Category = "Cinematic")
 	TSubclassOf<APawn> CinematicPawnClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Time System")
+	bool bIsTimeLimitReached = false;
 };

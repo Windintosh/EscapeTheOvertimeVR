@@ -51,7 +51,13 @@ void AHorrorPlayerController::Tick(float DeltaTime)
 		if (CurrentHour >= 24)
 		{
 			bIsGameOver = true;
-			if (AHorrorCharacter* MyChar = Cast<AHorrorCharacter>(GetPawn())) MyChar->OnDeath();
+			bIsTimeLimitReached = true;
+			CurrentHour = 0;
+			if (AHorrorCharacter* MyChar = Cast<AHorrorCharacter>(GetPawn())) 
+			{
+				MyChar->SetDeathLocation(EDeathLocationType::TimeOver);
+				MyChar->OnDeath();
+			}
 			OnTimeLimitReached();
 		}
 	}
