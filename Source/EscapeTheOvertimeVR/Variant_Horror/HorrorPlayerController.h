@@ -44,6 +44,10 @@ public:
 	UFUNCTION()
 	void Internal_OnCinematicFinished();
 
+	/** 현재 재생 중인 시네마틱을 끝으로 이동시키고 종료(스킵)합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Cinematic")
+	void SkipCurrentCinematic();
+
 public:
 	/* ===============================
 	   🕒 Time System (Public for ETOGameState Access)
@@ -101,6 +105,10 @@ protected:
 	/** 원래 조작하던 Pawn 저장용 */
 	UPROPERTY()
 	APawn* OriginalPawn = nullptr;
+
+	/** 현재 재생 중인 시퀀스 액터 저장용 (스킵 시 사용) */
+	UPROPERTY(BlueprintReadOnly, Category = "Cinematic")
+	ALevelSequenceActor* ActiveSequenceActor = nullptr;
 
 	/** 시네마틱 재생 시 생성되는 임시 시점용 폰 */
 	UPROPERTY()

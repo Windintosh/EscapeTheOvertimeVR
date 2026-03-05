@@ -472,21 +472,30 @@ void AVRCharacterPawn::Turn(const FInputActionValue& Value)
 {
 	if (bIsDead) return;
 
-	float TurnValue = Value.Get<float>();
+	// 이제 기존 float 대신 FVector2D로 X(좌우), Y(상하) 축을 모두 가져옵니다.
+	FVector2D TurnInput = Value.Get<FVector2D>();
 
-	// 데드존 처리 (살짝 건드린 건 무시)
+	// 좌우 조작량 파악
+	float TurnValue = TurnInput.X;
+
+	// 데드존 처리 (조이스틱을 조금만 기울였을 때는 무시)
 	if (FMath::Abs(TurnValue) < 0.5f) return;
 
-	// 회전 실행
-	AddControllerYawInput(TurnValue > 0 ? SnapTurnAngle : -SnapTurnAngle);
+	// [핵심] 조이스틱 허용 오차 (Tolerance) 설정: 45도 제한
+	// Y값의 크기가 X값의 크기보다 크다는 것은, 상/하단으로 45도 이상 꺾였다는 뜻입니다.
+	// 이 경우 플레이어가 턴을 의도한 것이 아니라 위아래 조작(다른 기능)을 의도한 것으로 보고 무시합니다.
+	if (FMath::Abs(TurnInput.Y) > FMath::Abs(TurnInput.X))
+	{
+		return;
+	}
 
-	// *참고*: VR에서는 AddControllerYawInput이 먹히지 않을 때가 있습니다. (HMD가 시야를 지배하므로)
-	// 만약 위 코드로 회전이 안 된다면 아래 코드를 사용하세요.
-	/*
+	// 1. 혹시 모를 로컬 액터 강제 회전
 	FRotator CurrentRot = GetActorRotation();
 	CurrentRot.Yaw += (TurnValue > 0 ? SnapTurnAngle : -SnapTurnAngle);
 	SetActorRotation(CurrentRot);
-	*/
+
+	// 2. 엔진 표준 컨트롤러 Yaw 회전
+	AddControllerYawInput(TurnValue > 0 ? SnapTurnAngle : -SnapTurnAngle);
 }
 
 void AVRCharacterPawn::ResetTurn()

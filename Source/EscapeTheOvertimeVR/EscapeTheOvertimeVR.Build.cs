@@ -67,7 +67,6 @@ public class EscapeTheOvertimeVR : ModuleRules
 			"EscapeTheOvertimeVR/MainClass/Characters/Creatures",
             "EscapeTheOvertimeVR/MainClass/Game",
             "EscapeTheOvertimeVR/MainClass/Game/AnimNotifies",
-            "EscapeTheOvertimeVR/MainClass/Game/CinematicControlInterface",
             "EscapeTheOvertimeVR/Variant_Horror",
 			"EscapeTheOvertimeVR/Variant_Horror/UI",
 			"EscapeTheOvertimeVR/Variant_Shooter",

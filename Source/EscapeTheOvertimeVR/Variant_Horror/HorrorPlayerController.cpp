@@ -10,6 +10,7 @@
 #include "HorrorCharacter.h"
 #include "HorrorUI.h"
 #include "Kismet/GameplayStatics.h"
+#include "MainClass/Characters/VRCharacterPawn/VRCharacterPawn.h"
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
@@ -117,6 +118,7 @@ void AHorrorPlayerController::StartCinematic_Implementation(ALevelSequenceActor*
 
 	bIsPaused = true;
 	OriginalPawn = GetPawn();
+	ActiveSequenceActor = SequenceActor;
 
 	// 1. 시네마틱 모드 설정
 	// bAllowInput이 true이면 bAffectsMovement를 false로 전달하여 입력을 허용함
@@ -129,7 +131,9 @@ void AHorrorPlayerController::StartCinematic_Implementation(ALevelSequenceActor*
 		SetIgnoreLookInput(true); // 시점은 시네마틱 카메라에 고정하는 것이 VR에서 안정적임
 	}
 
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	// [수정] VR 트래킹 파괴 방지
+	// UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(); 를 호출하면
+	// 방 크기와 센서 캘리브레이션 영점이 초기화되어 시네마틱 이후 바닥/공중에 뜨는 버그가 발생합니다. 호출하지 마세요.
 
 	// 2. 유체이탈용 시네마틱 폰 스폰 및 빙의
 	FActorSpawnParameters SpawnParams;
@@ -155,13 +159,40 @@ void AHorrorPlayerController::Internal_OnCinematicFinished()
 	ICinematicControlInterface::Execute_EndCinematic(this);
 }
 
+void AHorrorPlayerController::SkipCurrentCinematic()
+{
+	if (ActiveSequenceActor)
+	{
+		ALevelSequenceActor* TempSeqActor = ActiveSequenceActor;
+		// 1. 중복 실행 방지를 위해 먼저 주소를 날립니다.
+		ActiveSequenceActor = nullptr;
+
+		if (ULevelSequencePlayer* SeqPlayer = TempSeqActor->GetSequencePlayer())
+		{
+			// 2. 엔진 자체 이벤트를 해제하여 OnFinished가 두 번 연쇄 폭발하는 것을 막습니다.
+			SeqPlayer->OnFinished.RemoveAll(this);
+
+			// 3. 현재 시퀀스를 끝으로 이동시킨 후 정지
+			SeqPlayer->GoToEndAndStop();
+			
+			// 4. 저희 쪽에 만든 확실한 복귀 로직을 오직 한 번만 수동 실행합니다.
+			ICinematicControlInterface::Execute_EndCinematic(this);
+		}
+	}
+}
+
 void AHorrorPlayerController::EndCinematic_Implementation()
 {
 	// 1. 원래 몸으로 영혼 복귀
 	if (OriginalPawn)
 	{
+		// 시네마틱 카메라가 남긴 Pitch/Roll 값(위아래로 꺾인 시야각)을 0으로 초기화하지 않으면
+		// VR의 VROrigin 높이나 방향이 꼬여서 키가 비정상적으로 커지거나 작아집니다.
+		FRotator FlatRotation(0.0f, OriginalPawn->GetActorRotation().Yaw, 0.0f);
+		SetControlRotation(FlatRotation);
+
 		Possess(OriginalPawn);
-		SetViewTargetWithBlend(OriginalPawn, 0.5f); // 부드럽게 복귀
+		SetViewTargetWithBlend(OriginalPawn, 0.0f); // VR에서는 카메라 블렌딩이 어지러움과 위치 오류를 유발할 수 있으므로 0초로 즉시 전환
 	}
 
 	// 2. 임시 폰 제거
@@ -172,17 +203,46 @@ void AHorrorPlayerController::EndCinematic_Implementation()
 	}
 
 	// 3. 모든 입력 제한 강제 해제 및 상태 리셋
-	SetCinematicMode(false, false, false, false, false);
+	// [중요] 마지막 두 매개변수(bAffectsMovement, bAffectsTurning)를 true로 넘겨야 엔진이 카운터를 정상적으로 마이너스(해제)시킵니다.
+	SetCinematicMode(false, false, false, true, true); 
 	ResetIgnoreInputFlags();
 
 	SetIgnoreMoveInput(false);
 	SetIgnoreLookInput(false);
+
+	// 강제 인풋 잠금 해제 (완전 보장)
+	if (OriginalPawn)
+	{
+		OriginalPawn->EnableInput(this);
+	}
+	this->EnableInput(this);
 
 	// 4. 입력 모드를 게임 전용으로 명시적 전환 (UI 조작 잔상 방지)
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
 
 	bIsPaused = false;
+	ActiveSequenceActor = nullptr;
+
+	// Enhanced Input 컨텍스트가 빙의 복구 과정에서 날아갔을 수 있으므로 다시 주입 (이동/회전 버그 픽스)
+	if (IsLocalPlayerController())
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			// 컨트롤러 자체 입력 복구
+			for (UInputMappingContext* Context : DefaultMappingContexts) Subsystem->AddMappingContext(Context, 0);
+			for (UInputMappingContext* Context : MobileExcludedMappingContexts) Subsystem->AddMappingContext(Context, 0);
+			
+			// VR 폰 개별 매핑 컨텍스트가 BeginPlay에서 주입되었으므로 따로 복구
+			if (AVRCharacterPawn* VRPawn = Cast<AVRCharacterPawn>(OriginalPawn))
+			{
+				if (VRPawn->DefaultMappingContext)
+				{
+					Subsystem->AddMappingContext(VRPawn->DefaultMappingContext, 0);
+				}
+			}
+		}
+	}
 
 	// 맵 전환 및 리소스 정리를 위한 명령 실행
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("r.FlushRenderingCommands"));
