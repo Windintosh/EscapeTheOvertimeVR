@@ -87,6 +87,11 @@ void AItemBase::ActivateItem(AActor* Activator)
 		{
 			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("[!] 경고: 블루프린트에서 OnItemPickedUp 노드가 연결되지 않았습니다."));
 		}
+
+		if(ItemSound)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), ItemSound);
+		}
 	}
 
 	// 3. 아이템 파괴 (공통 로직)

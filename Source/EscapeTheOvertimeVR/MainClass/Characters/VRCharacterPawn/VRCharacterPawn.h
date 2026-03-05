@@ -116,6 +116,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	bool bHasTranquilizer = false;
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void GiveTranquilizer();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")

@@ -36,10 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadTime();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SaveItems();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LoadItems();
 
 	UFUNCTION()
@@ -49,8 +49,26 @@ public:
 	void LoadPlayerGotGolden();
 
 	UFUNCTION()
-	void SaveStuffs();
+	void SavePlayerGotTQ();
 
 	UFUNCTION()
+	void LoadPlayerGotTQ();
+
+	UFUNCTION(BlueprintCallable)
+	void SaveStuffs();
+
+	UFUNCTION(BlueprintCallable)
 	void LoadStuffs();
+
+	UFUNCTION()
+	void SaveGotPill();
+
+	UFUNCTION()
+	void LoadGotPill();
+
+	UFUNCTION()
+	void SaveGotIDCard();
+
+	UFUNCTION()
+	void LoadGotIDCard();
 };

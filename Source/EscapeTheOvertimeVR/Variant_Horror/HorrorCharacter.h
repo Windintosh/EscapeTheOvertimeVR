@@ -182,7 +182,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void UpdateHeartbeatState(bool bIsDetected);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essentials")
 	bool bIsGameCleared = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essentials")
+	bool bGotPill = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essentials")
+	bool bGotIDCard = false;
 
 protected:
 

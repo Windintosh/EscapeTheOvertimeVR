@@ -37,6 +37,7 @@ public:
 
 	float TargetMoveValue; //target value to move
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door")
 	bool bIsOpen = false;
 
 	UFUNCTION()

@@ -20,15 +20,32 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float PlayerMaxHP = 100.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float CurrentTimeMinute = 0.f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	int32 CurrentTimeHour = 20;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float SavedElapsedTime = 0.f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	int32 DistractionItemCount = 3;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	int32 TQAmmoCount = 3;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
+	bool bPlayerGotTQ = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Data")
+	bool bGotPill = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Data")
+	bool bPlayerGotGolden = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Data")
+	bool bGotIDCard = false;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player Data")
@@ -51,9 +68,19 @@ public:
 
 	int32 LoadTQAmmoCount();
 
-	bool bPlayerGotGolden = false;
-
 	void SaveGotGolden(bool bGot);
 
 	bool LoadGotGolden();
+
+	void SaveGotTQ(bool bGot);
+
+	bool LoadGotTQ();
+
+	void SaveGotPill(bool bGot);
+
+	bool LoadGotPill();
+
+	void SaveGotIDCard(bool bGot);
+
+	bool LoadGotIDCard();
 };

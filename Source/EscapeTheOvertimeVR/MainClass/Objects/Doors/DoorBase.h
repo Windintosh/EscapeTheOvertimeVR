@@ -41,6 +41,7 @@ protected:
 
 	float TargetYaw;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door")
 	bool bIsOpen = false;
 
 	UFUNCTION()

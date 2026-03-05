@@ -238,12 +238,37 @@ void AETOGameState::LoadPlayerGotGolden()
 	}
 }
 
+void AETOGameState::SavePlayerGotTQ()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		ETOGI->SaveGotTQ(PlayerCharacter->bHasTranquilizer);
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is saved: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
+void AETOGameState::LoadPlayerGotTQ()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		PlayerCharacter->bHasTranquilizer = ETOGI->LoadGotTQ();
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is loaded: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
 void AETOGameState::SaveStuffs()
 {
 	SavePlayerHP();
 	SaveTime();
 	SaveItems();
 	SavePlayerGotGolden();
+	SaveGotPill();
+	SaveGotIDCard();
+	SavePlayerGotTQ();
 }
 
 void AETOGameState::LoadStuffs()
@@ -252,4 +277,51 @@ void AETOGameState::LoadStuffs()
 	LoadTime();
 	LoadItems();
 	LoadPlayerGotGolden();
+	LoadGotPill();
+	LoadGotIDCard();
+	LoadPlayerGotTQ();
+}
+
+void AETOGameState::SaveGotPill()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		ETOGI->SaveGotPill(PlayerCharacter->bGotPill);
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is saved: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
+void AETOGameState::LoadGotPill()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		PlayerCharacter->bGotPill = ETOGI->LoadGotPill();
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is loaded: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
+void AETOGameState::SaveGotIDCard()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		ETOGI->SaveGotIDCard(PlayerCharacter->bGotIDCard);
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is saved: %s"), PlayerCharacter->bGotGolden);
+	}
+}
+
+void AETOGameState::LoadGotIDCard()
+{
+	UETOGameInstance* ETOGI = Cast<UETOGameInstance>(GetWorld()->GetGameInstance());
+	AVRCharacterPawn* PlayerCharacter = Cast<AVRCharacterPawn>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (ETOGI && PlayerCharacter)
+	{
+		PlayerCharacter->bGotIDCard = ETOGI->LoadGotIDCard();
+		//UE_LOG(LogTemp, Warning, TEXT("Player Got Golden is loaded: %s"), PlayerCharacter->bGotGolden);
+	}
 }

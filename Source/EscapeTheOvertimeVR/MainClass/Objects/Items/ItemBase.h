@@ -5,6 +5,7 @@
 #include "ItemInterface.h"
 #include "Components/SphereComponent.h"
 #include "VRGrabInterface.h"
+#include "Sound/SoundCue.h"
 #include "ItemBase.generated.h"
 
 UCLASS()
@@ -72,6 +73,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	bool bIsGimmickItem = false;
+
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	USoundCue* ItemSound;
 
 public:
 	// Called every frame

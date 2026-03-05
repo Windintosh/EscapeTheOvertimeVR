@@ -69,3 +69,32 @@ bool UETOGameInstance::LoadGotGolden()
 	return bPlayerGotGolden;
 }
 
+void UETOGameInstance::SaveGotTQ(bool bGot)
+{
+	bPlayerGotTQ = bGot;
+}
+
+bool UETOGameInstance::LoadGotTQ()
+{
+	return bPlayerGotTQ;
+}
+
+void UETOGameInstance::SaveGotPill(bool bGot)
+{
+	bGotPill = bGot;
+}
+
+bool UETOGameInstance::LoadGotPill()
+{
+	return bGotPill;
+}
+
+void UETOGameInstance::SaveGotIDCard(bool bGot)
+{
+	bGotIDCard = bGot;
+}
+
+bool UETOGameInstance::LoadGotIDCard()
+{
+	return bGotIDCard;
+}
