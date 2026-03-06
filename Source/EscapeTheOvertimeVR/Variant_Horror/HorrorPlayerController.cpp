@@ -170,13 +170,20 @@ void AHorrorPlayerController::SkipCurrentCinematic()
 		if (ULevelSequencePlayer* SeqPlayer = TempSeqActor->GetSequencePlayer())
 		{
 			// 2. 엔진 자체 이벤트를 해제하여 OnFinished가 두 번 연쇄 폭발하는 것을 막습니다.
+			// (이 함수는 현재 C++ 클래스의 바인딩만 해제하며, 블루프린트에 연결된 이벤트는 건드리지 않습니다.)
 			SeqPlayer->OnFinished.RemoveAll(this);
 
-			// 3. 현재 시퀀스를 끝으로 이동시킨 후 정지
+			// 3. 엔진 시퀀서를 끝 상태로 강제 스냅하여 애니메이션(문, 조명 등)을 최종 상태로 맞춥니다.
+			// (주의: 언리얼 엔진 구조상 GoToEndAndStop()은 OnFinished 이벤트를 발생시키지 않습니다)
 			SeqPlayer->GoToEndAndStop();
 			
-			// 4. 저희 쪽에 만든 확실한 복귀 로직을 오직 한 번만 수동 실행합니다.
+			// 4. [가장 중요] "스킵용 블루프린트 트리거"보다 먼저 수행되어야 할 최우선 작업: 원래 몸 복구!
+			// 여기서 임시 시네마틱 카메라를 폭파하고 VR 폰으로 안전하게 돌아옵니다.
 			ICinematicControlInterface::Execute_EndCinematic(this);
+
+			// 5. 트리거/레벨 블루프린트에 연결된 스킵 후속 처리(위치 이동, 사운드 재생)를 강제 발동시킵니다!
+			// 4번 과정 덕분에, OnFinished 블루프린트 노드에서 GetPlayerPawn()을 부를 때 임시 카메라폰이 아닌 "진짜 VR폰"이 반환되어 공간 점프가 완벽히 먹힙니다.
+			SeqPlayer->OnFinished.Broadcast();
 		}
 	}
 }

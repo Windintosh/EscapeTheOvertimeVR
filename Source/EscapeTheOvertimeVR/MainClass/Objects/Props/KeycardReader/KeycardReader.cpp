@@ -49,6 +49,7 @@ void AKeycardReader::ActivateProp(AActor* Activator)
 			}
 		}
 		bIsAccessGranted = true; // 접근 허가 상태로 변경
+		OnAccessGranted(); // 블루프린트 이벤트 호출
 	}
 	else
 	{

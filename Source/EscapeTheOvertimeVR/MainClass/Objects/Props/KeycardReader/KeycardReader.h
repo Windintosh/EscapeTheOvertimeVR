@@ -24,6 +24,10 @@ protected:
 
 	bool bIsAccessGranted = false;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAccessGranted();
+
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
