@@ -147,8 +147,8 @@ void AItemBase::Release_Implementation(FVector ThrowVelocity)
 		if (!bIsGimmickItem)
 		{
 			RootPrim->SetSimulatePhysics(true);
+			RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용, 기믹 아이템은 물리 적용 안 함
 		}
-		RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
 	}
 	if (StaticMesh)
 	{

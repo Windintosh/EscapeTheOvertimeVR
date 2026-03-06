@@ -79,5 +79,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
 	bool bIsUnclosable = false;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDoorOpened();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDoorClosed();
 };
 //flag for the file change

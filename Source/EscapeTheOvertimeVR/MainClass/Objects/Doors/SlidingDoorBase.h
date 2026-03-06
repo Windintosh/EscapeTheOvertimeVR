@@ -63,6 +63,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
 	bool bIsUnclosable = false;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDoorOpened();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDoorClosed();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -50,6 +50,7 @@ void ASlidingDoorBase::OpenDoor()
 	//UpdateDoorMovement(1.0f);
 	bIsOpen = true;
 	bIsUnclosable = true;
+	OnDoorOpened();
 }
 
 void ASlidingDoorBase::CloseDoor()
@@ -58,6 +59,7 @@ void ASlidingDoorBase::CloseDoor()
 	if (bIsUnclosable) return;
 	SlidingTimeline->ReverseFromEnd();
 	bIsOpen = false;
+	OnDoorClosed();
 }
 
 // Called when the game starts or when spawned

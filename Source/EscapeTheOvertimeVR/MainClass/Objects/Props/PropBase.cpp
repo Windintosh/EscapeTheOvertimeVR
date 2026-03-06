@@ -91,7 +91,7 @@ void APropBase::Release_Implementation(FVector ThrowVelocity)
 	// 2. 투척 속도 체크 (기준값 300.0f 등은 테스트하며 조절)
 	float Speed = ThrowVelocity.Size();
 
-	if (Speed > 500.f) // [의도: 투척]
+	if (Speed > 500.f && !bIsGimmickProp) // [의도: 투척]
 	{
 		// 기존 로직: 물리 켜고 날려보냄
 		Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -113,14 +113,15 @@ void APropBase::Release_Implementation(FVector ThrowVelocity)
 	else
 	{
 		// 기본 동작: 손에서 떨어지고 물리 켜짐
-		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
 		UPrimitiveComponent* RootPrim = Cast<UPrimitiveComponent>(GetRootComponent());
 		if (RootPrim)
 		{
 			RootPrim->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			if(!bIsGimmickProp) RootPrim->SetSimulatePhysics(true);
-			RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
+			if(!bIsGimmickProp)
+			{
+				RootPrim->SetSimulatePhysics(true);
+				RootPrim->SetPhysicsLinearVelocity(ThrowVelocity); // 기본 물리 적용
+			}
 		}
 		if(StaticMesh)
 		{
