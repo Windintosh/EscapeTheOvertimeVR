@@ -33,10 +33,9 @@ public:
 	   🎬 Cinematic System (Interface)
 	   =============================== */
 
-	   /**
-		* @param bAllowInput 체크 시 시네마틱 도중에도 이동/상호작용 인풋을 허용합니다.
+	   /** * 파라미터가 제거된 StartCinematic 구현부입니다.
 		*/
-	virtual void StartCinematic_Implementation(ALevelSequenceActor* SequenceActor, ACineCameraActor* CameraActor, bool bAllowInput) override;
+	virtual void StartCinematic_Implementation(ALevelSequenceActor* SequenceActor, ACineCameraActor* CameraActor) override;
 
 	virtual void EndCinematic_Implementation() override;
 
@@ -50,7 +49,7 @@ public:
 
 public:
 	/* ===============================
-	   🕒 Time System (Public for ETOGameState Access)
+	   🕒 Time System
 	   =============================== */
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Time System")
@@ -68,6 +67,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Time System")
 	bool bIsPaused = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Time System")
 	bool bIsGameOver = false;
 
 	UFUNCTION(BlueprintCallable)
@@ -76,6 +76,10 @@ public:
 	/** 시간 종료 시 BP에서 호출될 이벤트 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Time System")
 	void OnTimeLimitReached();
+
+	/** HorrorCharacter.cpp의 에러 해결을 위한 Getter 함수 */
+	UFUNCTION(BlueprintPure, Category = "Time System")
+	bool GetTimeLimitReached() const { return bIsTimeLimitReached; }
 
 	/* ===============================
 	   🎮 UI / Input / Mobile
@@ -99,8 +103,6 @@ public:
 	UPROPERTY()
 	UUserWidget* MobileControlsWidget;
 
-	bool GetTimeLimitReached() const { return bIsTimeLimitReached; }	
-
 protected:
 	/** 원래 조작하던 Pawn 저장용 */
 	UPROPERTY()
@@ -118,6 +120,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cinematic")
 	TSubclassOf<APawn> CinematicPawnClass;
 
-	UPROPERTY(VisibleAnywhere, Category = "Time System")
+	/** 시간 제한 도달 여부를 저장하는 내부 변수 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Time System")
 	bool bIsTimeLimitReached = false;
 };

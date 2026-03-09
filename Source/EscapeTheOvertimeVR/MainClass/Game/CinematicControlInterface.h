@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
@@ -18,10 +20,10 @@ class ESCAPETHEOVERTIMEVR_API ICinematicControlInterface
 	GENERATED_BODY()
 
 public:
-	/** * @param bAllowInput 체크 시 시네마틱 도중에도 이동/상호작용 인풋을 허용합니다.
+	/** * 시네마틱을 시작합니다. 이제 인풋은 항상 허용되며 시점만 카메라에 고정됩니다.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Cinematic")
-	void StartCinematic(ALevelSequenceActor* SequenceActor, ACineCameraActor* CameraActor, bool bAllowInput);
+	void StartCinematic(ALevelSequenceActor* SequenceActor, ACineCameraActor* CameraActor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Cinematic")
 	void EndCinematic();
