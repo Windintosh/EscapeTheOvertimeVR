@@ -122,6 +122,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	bool bGotGolden = false;
 
+	UFUNCTION(BlueprintCallable, Category = "VR Interaction")
+	void ForceDropItem(AActor* ItemToDrop);
+
+	
+
 protected:
 
 	// 필수 오버라이드 함수

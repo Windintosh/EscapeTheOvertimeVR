@@ -643,4 +643,53 @@ void AVRCharacterPawn::UpdateDamageEffect()
 	}
 }
 
+void AVRCharacterPawn::ForceDropItem(AActor* ItemToDrop)
+{
+	if (!ItemToDrop) return;
 
+	// 1. 왼손이 이 아이템을 쥐고 있는지 확인
+	if (HeldActorLeft == ItemToDrop)
+    {
+        TryReleaseActor(HeldActorLeft, LeftHandMesh);
+    }
+    // 2. 오른손이 이 아이템을 쥐고 있는지 확인
+    else if (HeldActorRight == ItemToDrop)
+    {
+        TryReleaseActor(HeldActorRight, RightHandMesh);
+    }
+
+	/*
+	// 1. 인터페이스가 구현되어 있는지 확인
+	if (ItemToDrop->Implements<UVRGrabInterface>())
+	{
+		// 2. 현재 잡고 있는 손이 어디인지 확인
+		USceneComponent* HandToUse = nullptr;
+		bool bWasLeft = false;
+
+		if (HeldActorLeft == ItemToDrop)
+		{
+			HandToUse = LeftHandMesh;
+			bWasLeft = true;
+		}
+		else if (HeldActorRight == ItemToDrop)
+		{
+			HandToUse = RightHandMesh;
+			bWasLeft = false;
+		}
+
+		if (HandToUse)
+		{
+			// 3. Release 함수 호출 (속도는 0으로 설정하여 던지지 않음)
+			IVRGrabInterface::Execute_Release(ItemToDrop, FVector::ZeroVector);
+
+			// 4. 변수 초기화
+			if (bWasLeft)
+				HeldActorLeft = nullptr;
+			else
+				HeldActorRight = nullptr;
+
+			UE_LOG(LogTemp, Warning, TEXT("Force Dropped: %s"), *ItemToDrop->GetName());
+		}
+	}
+	*/
+}
