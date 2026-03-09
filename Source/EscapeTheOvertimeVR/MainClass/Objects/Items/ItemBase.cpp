@@ -37,6 +37,7 @@ void AItemBase::Tick(float DeltaTime)
 
 void AItemBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	/*
 	// 1단계: 충돌 감지 디버깅
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("[1] 충돌 감지됨!"));
@@ -59,6 +60,7 @@ void AItemBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FailMsg);
 	}
+	*/
 }
 
 void AItemBase::OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
