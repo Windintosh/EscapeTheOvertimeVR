@@ -1,6 +1,7 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Variant_Horror/HorrorPlayerController.h"
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
@@ -27,6 +28,9 @@ void AHorrorPlayerController::BeginPlay()
 
 	// VR 트래킹 오리진 설정
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Stage);
+
+	// 게임 시작 후 0.5초 뒤 자동 영점 조절 (트래킹 시스템 초기화 대기)
+	GetWorld()->GetTimerManager().SetTimer(RecenterTimerHandle, this, &AHorrorPlayerController::RecenterVR, 0.5f, false);
 
 	// 모바일 컨트롤 UI 생성
 	if (IsLocalPlayerController() && MobileControlsWidgetClass)
@@ -96,6 +100,33 @@ void AHorrorPlayerController::SetupInputComponent()
 			for (UInputMappingContext* Context : MobileExcludedMappingContexts) Subsystem->AddMappingContext(Context, 0);
 		}
 	}
+
+	// 입력 액션 바인딩
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		if (UtilityAction)
+		{
+			EnhancedInputComponent->BindAction(UtilityAction, ETriggerEvent::Triggered, this, &AHorrorPlayerController::OnUtilityActionPressed);
+		}
+	}
+}
+
+void AHorrorPlayerController::OnUtilityActionPressed(const FInputActionValue& Value)
+{
+	if (ActiveSequenceActor)
+	{
+		SkipCurrentCinematic();
+	}
+	else
+	{
+		RecenterVR();
+	}
+}
+
+void AHorrorPlayerController::RecenterVR()
+{
+	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(0.0f, EOrientPositionSelector::OrientationAndPosition);
+	UE_LOG(LogTemp, Log, TEXT("VR Tracking Recentered."));
 }
 
 void AHorrorPlayerController::InitCurrentTime()

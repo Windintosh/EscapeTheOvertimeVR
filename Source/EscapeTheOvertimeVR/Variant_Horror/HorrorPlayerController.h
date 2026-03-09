@@ -1,4 +1,4 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Cinematic")
 	void SkipCurrentCinematic();
 
+	/** VR HMD 위치와 방향을 현재 위치 기준으로 영점 조절합니다. */
+	UFUNCTION(BlueprintCallable, Category = "VR")
+	void RecenterVR();
+
 public:
 	/* ===============================
 	   🕒 Time System (Public for ETOGameState Access)
@@ -93,6 +97,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TArray<UInputMappingContext*> MobileExcludedMappingContexts;
 
+	/** 시네마틱 스킵 및 VR 위치 보정을 위한 통합 입력 액션 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	class UInputAction* UtilityAction;
+
+	/** Utility Action (버튼) 입력 처리 */
+	void OnUtilityActionPressed(const struct FInputActionValue& Value);
+
 	UPROPERTY(EditAnywhere, Category = "Input|Mobile")
 	TSubclassOf<UUserWidget> MobileControlsWidgetClass;
 
@@ -113,6 +124,9 @@ protected:
 	/** 시네마틱 재생 시 생성되는 임시 시점용 폰 */
 	UPROPERTY()
 	APawn* CinematicPawnInstance = nullptr;
+
+	/** 게임 시작 시 자동 영점 조절을 위한 타이머 핸들 */
+	FTimerHandle RecenterTimerHandle;
 
 	/** 시네마틱 재생용 VR 빈 폰 (BP에서 할당 필수) */
 	UPROPERTY(EditDefaultsOnly, Category = "Cinematic")
