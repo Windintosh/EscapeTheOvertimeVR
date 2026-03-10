@@ -1,4 +1,4 @@
-﻿#include "MainClass/Characters/Boss/EnemyProjectile.h"
+#include "MainClass/Characters/Boss/EnemyProjectile.h"
 #include "Variant_Horror/HorrorCharacter.h"
 #include "VRCharacterPawn.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,7 +12,7 @@ AEnemyProjectile::AEnemyProjectile()
 	//Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	//SetRootComponent(Scene);
 
-	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
 	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Collision->SetCollisionObjectType(ECC_WorldDynamic);
@@ -21,7 +21,7 @@ AEnemyProjectile::AEnemyProjectile()
 	Collision->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
 	Collision->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	Collision->SetGenerateOverlapEvents(true);
-	Collision->InitSphereRadius(40.0f);
+	Collision->InitBoxExtent(FVector(40.0f, 40.0f, 40.0f));
 	SetRootComponent(Collision);
 	//Collision->SetupAttachment(Scene);
 
@@ -161,10 +161,10 @@ void AEnemyProjectile::Tick(float DeltaTime)
 		DestroyProjectile();
 	}
 
-	// 4. 디버그 스피어 그리기 (기존 코드)
+	// 4. 디버그 박스 그리기 (기존 코드 수정)
 	if (Collision)
 	{
-		DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetScaledSphereRadius(), 12, FColor::Red, false, -1.0f);
+		DrawDebugBox(GetWorld(), Collision->GetComponentLocation(), Collision->GetScaledBoxExtent(), Collision->GetComponentQuat(), FColor::Red, false, -1.0f, 0, 2.0f);
 	}
 
 }

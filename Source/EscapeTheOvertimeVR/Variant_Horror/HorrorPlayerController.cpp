@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Variant_Horror/HorrorPlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -33,11 +33,11 @@ void AHorrorPlayerController::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(RecenterTimerHandle, this, &AHorrorPlayerController::RecenterVR, 0.5f, false);
 
 	// 모바일 컨트롤 UI 생성
-	if (IsLocalPlayerController() && MobileControlsWidgetClass)
-	{
-		MobileControlsWidget = CreateWidget<UUserWidget>(this, MobileControlsWidgetClass);
-		if (MobileControlsWidget) MobileControlsWidget->AddToPlayerScreen(0);
-	}
+	// if (IsLocalPlayerController() && MobileControlsWidgetClass)
+	// {
+	// 	MobileControlsWidget = CreateWidget<UUserWidget>(this, MobileControlsWidgetClass);
+	// 	if (MobileControlsWidget) MobileControlsWidget->AddToPlayerScreen(0);
+	// }
 }
 
 void AHorrorPlayerController::Tick(float DeltaTime)
@@ -73,18 +73,18 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	// 캐릭터 빙의 시 메인 HUD UI 생성 및 데이터 연결
-	if (IsLocalPlayerController() && aPawn && HorrorUIClass)
-	{
-		if (!HorrorUI)
-		{
-			HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
-			if (HorrorUI) HorrorUI->AddToViewport(0);
-		}
-		if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(aPawn))
-		{
-			if (HorrorUI) HorrorUI->SetupCharacter(HorrorCharacter);
-		}
-	}
+	// if (IsLocalPlayerController() && aPawn && HorrorUIClass)
+	// {
+	// 	if (!HorrorUI)
+	// 	{
+	// 		HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
+	// 		if (HorrorUI) HorrorUI->AddToViewport(0);
+	// 	}
+	// 	if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(aPawn))
+	// 	{
+	// 		if (HorrorUI) HorrorUI->SetupCharacter(HorrorCharacter);
+	// 	}
+	// }
 }
 
 void AHorrorPlayerController::SetupInputComponent()

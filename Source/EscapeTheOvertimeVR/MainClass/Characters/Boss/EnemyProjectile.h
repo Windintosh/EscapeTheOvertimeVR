@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "EnemyProjectile.generated.h"
 
 UCLASS()
@@ -22,7 +22,7 @@ protected:
 	USceneComponent* Scene;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
-	USphereComponent* Collision;
+	UBoxComponent* Collision;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	UStaticMeshComponent* StaticMesh;

@@ -168,6 +168,7 @@ protected:
 	void OnSprintEnd(const FInputActionValue& Value);
 
 	// 현재 선택된 슬롯
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory")
 	EItemSlot CurrentItemSlot = EItemSlot::None;
 
 	// 슬롯 변경 함수
