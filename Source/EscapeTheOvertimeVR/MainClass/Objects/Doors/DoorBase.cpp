@@ -32,6 +32,11 @@ void ADoorBase::BeginPlay()
 	InitialYaw = MeshComp->GetRelativeRotation().Yaw;
 	TargetYaw = InitialYaw + MovableYaw; // need to add L/R logic later
 
+	if (GetClass()->GetName().Contains("Left"))
+	{
+		TargetYaw = InitialYaw - MovableYaw;
+	}
+
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADoorBase::OnOverlapBegin);
 
 	if (DoorCurve)
