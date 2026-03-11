@@ -137,10 +137,10 @@ protected:
 	float GrabRadius = 20.0f;
 
 	// 현재 잡고 있는 액터를 저장 (놓을 때 필요)
-	UPROPERTY() // 가비지 컬렉션 방지 및 안전한 참조를 위해 UPROPERTY 필수
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Interaction") // 가비지 컬렉션 방지 및 안전한 참조를 위해 UPROPERTY 필수
 	AActor* HeldActorLeft = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VR Interaction")
 	AActor* HeldActorRight = nullptr;
 
 	// 내부 헬퍼 함수: 특정 손으로 잡기/놓기 시도
