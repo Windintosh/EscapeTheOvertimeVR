@@ -60,7 +60,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	UStaticMeshComponent* StaticMesh;
 
-
 	virtual void OnItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	virtual void OnItemEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
@@ -76,6 +75,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	USoundCue* ItemSound;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Item")
+	void OnItemActivation();
 
 public:
 	// Called every frame

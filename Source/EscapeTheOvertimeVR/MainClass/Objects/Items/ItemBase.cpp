@@ -94,6 +94,7 @@ void AItemBase::ActivateItem(AActor* Activator)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), ItemSound);
 		}
+		OnItemActivation();
 	}
 
 	// 3. 아이템 파괴 (공통 로직)

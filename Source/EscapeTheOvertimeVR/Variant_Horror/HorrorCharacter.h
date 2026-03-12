@@ -64,30 +64,31 @@ protected:
 	//float IncreasedSpeed = 1200.0f; // 필요시 값 조정
 
 	/** Default walk speed when not sprinting or recovering */
-	UPROPERTY(EditAnywhere, Category = "Walk")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Walk")
 	float WalkSpeed = 250.0f;
 
 	/** Time interval for sprinting stamina ticks */
-	UPROPERTY(EditAnywhere, Category = "Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
 	float SprintFixedTickTime = 0.03333f;
 
 	/** Sprint stamina amount. Maxes at SprintTime */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprint")
 	float SprintMeter = 0.0f;
 
 	/** How long we can sprint for, in seconds */
-	UPROPERTY(EditAnywhere, Category = "Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
 	float SprintTime = 5.0f;
 
 	/** Walk speed while sprinting */
-	UPROPERTY(EditAnywhere, Category = "Sprint", meta = (ClampMin = 0, Units = "cm/s"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprint", meta = (ClampMin = 0, Units = "cm/s"))
 	float SprintSpeed = 600.0f;
 
 	/** Walk speed while recovering stamina */
-	UPROPERTY(EditAnywhere, Category = "Recovery", meta = (ClampMin = 0, Units = "cm/s"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recovery", meta = (ClampMin = 0, Units = "cm/s"))
 	float RecoveringWalkSpeed = 150.0f;
 
 	/** Time it takes for the sprint meter to recover */
-	UPROPERTY(EditAnywhere, Category = "Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
 	float RecoveryTime = 0.0f;
 
 	/** Sprint tick timer */
