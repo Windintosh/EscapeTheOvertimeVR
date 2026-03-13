@@ -144,6 +144,11 @@ void ABoss::OnDeath()
 	AIController->ClearFocus(EAIFocusPriority::Gameplay);
 	StopAnimMontage();
 	GetCharacterMovement()->DisableMovement();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	bIsDead = true; //Flag -> set  animation in ABP
 	HandleDeath();
 }

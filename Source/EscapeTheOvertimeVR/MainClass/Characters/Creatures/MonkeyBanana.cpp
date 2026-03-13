@@ -10,8 +10,8 @@ AMonkeyBanana::AMonkeyBanana()
 	// 발사체 설정
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComp"));
 	ProjectileMovement->UpdatedComponent = RootComponent;
-	ProjectileMovement->InitialSpeed = 1500.f; // 속도 조금 더 올림
-	ProjectileMovement->MaxSpeed = 2000.f;
+	ProjectileMovement->InitialSpeed = 3000.f; // 속도 조금 더 올림
+	ProjectileMovement->MaxSpeed = 4000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bSweepCollision = true;
 	ProjectileMovement->bSimulationEnabled = true; // 이동 시뮬레이션 켜기
@@ -24,7 +24,7 @@ AMonkeyBanana::AMonkeyBanana()
 	RotatingMovement->RotationRate = FRotator(0.f, 0.f, 360.f); // 초당 360도 회전
 
 	Damage = 10.f;
-	KnockbackStrength = 1000.f;
+	KnockbackStrength = 2000.f;
 }
 
 // Called when the game starts or when spawned
