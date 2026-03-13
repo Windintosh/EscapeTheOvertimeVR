@@ -20,7 +20,7 @@ void AMonkey::ThrowBanana()
 
     // 4. 마법의 함수: "Start에서 End로 던지려면 어떤 속도로 던져야 해?"
     // TossSpeed(던지는 힘)를 정해주면, 엔진이 알맞은 각도(Velocity)를 계산해서 LaunchVelocity에 넣어줍니다.
-    float TossSpeed = 1200.0f; // 이 값을 조절해서 포물선의 높낮이를 결정하세요!
+    //float TossSpeed = 1200.0f; // 이 값을 조절해서 포물선의 높낮이를 결정하세요!
 
     bool bSuccess = UGameplayStatics::SuggestProjectileVelocity(
         this,
