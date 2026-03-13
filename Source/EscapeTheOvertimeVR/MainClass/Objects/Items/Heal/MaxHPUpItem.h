@@ -17,5 +17,6 @@ protected:
 
 	virtual void ActivateItem(AActor* Activator) override;
 
-	float HealAmount = 10.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heal")
+	float HealAmount = 20.f;
 };
