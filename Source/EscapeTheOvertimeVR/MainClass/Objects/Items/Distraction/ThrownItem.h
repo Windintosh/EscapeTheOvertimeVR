@@ -76,10 +76,10 @@ protected:
 
 	bool bWasThrown = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bIsGolden = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UMaterial* GoldenMaterial;
 
 	FPointDamageEvent DamageEvent;
