@@ -140,6 +140,7 @@ void AItemBase::Grab_Implementation(USceneComponent* HandController)
 
 void AItemBase::Release_Implementation(FVector ThrowVelocity)
 {
+	if (!bIsGrabbable) return;
 	// 기본 동작: 손에서 떨어지고 물리 켜짐
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 

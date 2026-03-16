@@ -1,4 +1,4 @@
-﻿#include "MainClass/Objects/Props/PropBase.h"
+#include "MainClass/Objects/Props/PropBase.h"
 #include "EscapeTheOvertimeCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -79,6 +79,8 @@ void APropBase::Grab_Implementation(USceneComponent* HandController)
 
 void APropBase::Release_Implementation(FVector ThrowVelocity)
 {
+	if (!bIsGrabbable) return;
+
 	// 1. 손에서 분리
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 

@@ -1,4 +1,4 @@
-﻿#include "MainClass/Objects/Props/MainDoorLock/MainDoorLock.h"
+#include "MainClass/Objects/Props/MainDoorLock/MainDoorLock.h"
 #include "MainDoorKey.h"
 #include "MainDoor.h"
 
@@ -6,6 +6,8 @@ AMainDoorLock::AMainDoorLock()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bIsGimmickProp = true;
+	bIsGrabbable = false;
+	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 }
 
 void AMainDoorLock::BeginPlay()
