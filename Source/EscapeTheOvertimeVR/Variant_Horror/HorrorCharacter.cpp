@@ -41,25 +41,25 @@ AHorrorCharacter::AHorrorCharacter()
 	SprintMeter = SprintTime;
 	ChasingEnemyCount = 0;
 
-	// 생성자에서 사운드 큐 파일 찾아서 로드하기 (Hard Loading)
-	static ConstructorHelpers::FObjectFinder<USoundBase> DamageSoundAsset(TEXT("/Game/EscapeTheOvertime/07_FX/SFX/CinematicSound/Ugh_Cue.Ugh_Cue"));
+	//// 생성자에서 사운드 큐 파일 찾아서 로드하기 (Hard Loading)
+	//static ConstructorHelpers::FObjectFinder<USoundBase> DamageSoundAsset(TEXT("/Game/EscapeTheOvertime/07_FX/SFX/CinematicSound/Ugh_Cue.Ugh_Cue"));
 
-	if (DamageSoundAsset.Succeeded())
-	{
-		DamageSound = DamageSoundAsset.Object;
-	}
+	//if (DamageSoundAsset.Succeeded())
+	//{
+	//	DamageSound = DamageSoundAsset.Object;
+	//}
 
-	// 심장박동 오디오 컴포넌트 설정
-	HeartbeatAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("HeartbeatAudioComponent"));
-	HeartbeatAudioComponent->SetupAttachment(RootComponent);
-	HeartbeatAudioComponent->bAutoActivate = false; // 시작 시 자동 재생 끔
+	//// 심장박동 오디오 컴포넌트 설정
+	//HeartbeatAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("HeartbeatAudioComponent"));
+	//HeartbeatAudioComponent->SetupAttachment(RootComponent);
+	//HeartbeatAudioComponent->bAutoActivate = false; // 시작 시 자동 재생 끔
 
-	// 심장박동 사운드 큐 로드
-	static ConstructorHelpers::FObjectFinder<USoundCue> HeartbeatCueAsset(TEXT("/Game/EscapeTheOvertime/06_Audio/BGM/Player/HeartBeat_Cue.HeartBeat_Cue"));
-	if (HeartbeatCueAsset.Succeeded())
-	{
-		HeartbeatAudioComponent->SetSound(HeartbeatCueAsset.Object);
-	}
+	//// 심장박동 사운드 큐 로드
+	//static ConstructorHelpers::FObjectFinder<USoundCue> HeartbeatCueAsset(TEXT("/Game/EscapeTheOvertime/06_Audio/BGM/Player/HeartBeat_Cue.HeartBeat_Cue"));
+	//if (HeartbeatCueAsset.Succeeded())
+	//{
+	//	HeartbeatAudioComponent->SetSound(HeartbeatCueAsset.Object);
+	//}
 }
 
 void AHorrorCharacter::BeginPlay()
