@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float PlayerMaxHP = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
@@ -29,10 +29,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
 	float SavedElapsedTime = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Data")
 	int32 DistractionItemCount = 3;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Data")
 	int32 TQAmmoCount = 3;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player Data")

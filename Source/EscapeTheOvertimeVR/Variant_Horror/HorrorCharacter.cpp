@@ -96,7 +96,7 @@ void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
 	// clear the sprint timer
 	GetWorld()->GetTimerManager().ClearTimer(SprintTimer);
 }
-
+/*
 void AHorrorCharacter::UpdateHeartbeatState(bool bIsDetected)
 {
 	// 1. 추격자 수 카운팅
@@ -132,6 +132,7 @@ void AHorrorCharacter::UpdateHeartbeatState(bool bIsDetected)
 		}
 	}
 }
+*/
 
 // 보스가 때리면 자동 호출됨. 맞았을 때만 UI 업데이트 방송을 함.
 float AHorrorCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

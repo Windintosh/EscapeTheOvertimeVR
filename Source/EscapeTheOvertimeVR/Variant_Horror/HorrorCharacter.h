@@ -176,12 +176,12 @@ public:
 	bool GetSprintState() const;
 
 	// 심장박동 사운드 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
-	UAudioComponent* HeartbeatAudioComponent;
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
+	// UAudioComponent* HeartbeatAudioComponent;
 
 	// AI 감지 상태 업데이트 함수 (True: 발각됨, False: 따돌림)
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void UpdateHeartbeatState(bool bIsDetected);
+	// UFUNCTION(BlueprintCallable, Category = "AI")
+	// void UpdateHeartbeatState(bool bIsDetected);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essentials")
 	bool bIsGameCleared = false;
